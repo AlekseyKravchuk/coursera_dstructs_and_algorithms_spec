@@ -1,18 +1,31 @@
 from collections import defaultdict
+from collections import deque
+from typing import List
 
 
-def compute_tree_height(labels):
+def compute_tree_height(nodes: List[int]) -> int:
     parents = defaultdict(list)
-    for i, p_label in enumerate(labels):
-        parents[p_label].append(i)
-    return (len(parents) - 1) if (len(parents) % 2) else (len(parents))
+    for i, parent in enumerate(nodes):
+        parents[parent].append(i)
+
+    q = deque(parents[-1])
+    height = 0
+    while q:
+        for _ in range(len(q)):
+            current_parent = q.popleft()
+            children = parents[current_parent]
+            for child in children:
+                q.append(child)
+        height += 1
+    return height
 
 
 def main():
     n = int(input())  # number of nodes
-    labels = [int(x) for x in input().split()]
-    assert n == len(labels)
-    print(compute_tree_height(labels))
+    nodes = [int(x) for x in input().split()]
+    assert n == len(nodes)
+
+    print(compute_tree_height(nodes))
 
 
 if __name__ == '__main__':
