@@ -24,7 +24,6 @@ def main():
     n = int(input())  # number of nodes
     nodes = [int(x) for x in input().split()]
     assert n == len(nodes)
-
     print(compute_tree_height(nodes))
 
 
