@@ -1,17 +1,24 @@
 import functools
 
 
-def compare(num_1, num_2):
-    l1 = len(num_1)
-    l2 = len(num_2)
+def compare(a, b):
+    ab = str(a) + str(b)
+    ba = str(b) + str(a)
+
+    if int(ab) > int(ba):
+        return 1
+    elif int(ab) < int(ba):
+        return -1
+    else:
+        return 0
 
 
 def main():
     n = int(input())
     numbers = list(map(int, input().split()))
     assert len(numbers) == n
-    res_lst = sorted(numbers, key=functools.cmp_to_key(compare))
-    print(res_lst)
+
+    print(''.join(map(str, sorted(numbers, key=functools.cmp_to_key(compare), reverse=True))))
 
 
 if __name__ == '__main__':
