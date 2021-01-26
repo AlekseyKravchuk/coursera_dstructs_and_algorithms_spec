@@ -1,8 +1,7 @@
 import numpy as np
 import timeit
 from math import floor
-import random
-from collections import deque
+from collections import defaultdict
 
 
 def selection_sort(x):
