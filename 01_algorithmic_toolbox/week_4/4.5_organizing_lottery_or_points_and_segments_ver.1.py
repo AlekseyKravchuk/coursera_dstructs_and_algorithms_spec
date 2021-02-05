@@ -6,8 +6,8 @@ def flatten_lst(lst_of_lst):
     return [elm for lst in lst_of_lst for elm in lst]
 
 
-# resources needed using this approach: Good job! (Max time used: 0.46/20.00, max memory used: 43761664/536870912.)
-# info is a defaultdict where KEYs are point values and VALUEs are list, containing types of points having the same val
+# Resource consumption: Max time used: 0.46/20.00, max memory used: 43761664/536870912
+# info is a defaultdict where KEYs are point coords and VALUEs are list, containing types of points having the same val
 def points_coverage_by_segments(info, sorted_points):
     cnt = 0
     d = defaultdict(int)
