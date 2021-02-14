@@ -1,7 +1,6 @@
 from collections import namedtuple
 from math import inf
 from math import sqrt
-import random
 
 Point = namedtuple('Point', ['x', 'y'])
 
@@ -21,8 +20,8 @@ def min_dist_brute_force(points):
 
 
 def closest_split_dist(X, Y, median, min_dist):
-    # Create a subarray of points not further than min_dist_over_halves from median in x-sorted array
-    # Now these points will be sorted by Y coordinate
+    # Create a subarray of points not further than min_dist_over_halves from median in x-sorted array (points in strip)
+    # These points will be sorted by Y coordinate in ascending order (from bottom to top)
     strip = [point for point in Y if abs(point.x - median) < min_dist]
     for i, curr_point in enumerate(strip):
         for j in range(i + 1, min(i + 6, len(strip))):
@@ -32,7 +31,7 @@ def closest_split_dist(X, Y, median, min_dist):
                     min_dist = dist
             else:
                 break
-    return min(min_dist, min_dist)
+    return min_dist
 
 
 def closest_dist(X, Y):
