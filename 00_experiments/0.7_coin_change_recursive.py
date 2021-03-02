@@ -1,6 +1,7 @@
 from copy import deepcopy
 from math import inf
 
+
 # TO DO: разобраться, как работает этот алгоритм Певзнера и сравнить его по времени работы с моим
 def recursive_change_pevzner(money, coins):
     if money == 0:
