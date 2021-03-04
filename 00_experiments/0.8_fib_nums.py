@@ -17,10 +17,9 @@ def fib_num_using_array(n):
 def fib_num_simple(n):
     a = 0
     b = 1
-    for i in range(2, n + 1):
-        c = a + b
-        a, b = b, c
-    return c
+    for i in range(2, n+1):
+        a, b = b, a+b
+    return b
 
 
 if __name__ == '__main__':
