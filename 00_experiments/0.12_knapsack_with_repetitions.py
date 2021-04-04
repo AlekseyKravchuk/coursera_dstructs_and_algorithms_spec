@@ -1,9 +1,17 @@
+# test input
+"""
+10 4
+6 3 4 2
+30 14 16 9
+"""
+
+
 def knapsack_with_repetitions(W, weights, c):
     F = [0 for _ in range(W+1)]
-    for i in range(1, W+1):              # F[i] is max cost of filling a knapsack with a maximum weight of i kg
-        for j, w in enumerate(weights):  # w is current weight from item weights array
-            if w <= i:
-                F[i] = max(F[i], F[i-w] + c[j])
+    for w in range(1, W+1):  # F[w] is max cost of filling a knapsack of max w = w kg
+        for j, _ in enumerate(weights):  # curr_weight is current weight from item weights array
+            if weights[j] <= w:
+                F[w] = max(F[w], F[w-weights[j]] + c[j])
     return F
 
 
