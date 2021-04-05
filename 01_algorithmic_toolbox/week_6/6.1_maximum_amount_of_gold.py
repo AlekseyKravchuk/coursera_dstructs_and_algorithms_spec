@@ -24,6 +24,7 @@ def knapsack_without_repetitions(W, weights):
 if __name__ == '__main__':
     W, n = map(int, input().split())
     weights = [int(x) for x in input().split()]
+    weights.sort()
 
     dp_table = knapsack_without_repetitions(W, weights)
 
