@@ -38,7 +38,7 @@ def mult_recursive(a: List[int], i, j) -> int:
         # mult_recursive(a, k+1, j) - multiplication operations needed to get intermediate matrix in RIGHT subtree
         # a[i-1] * a[j] * a[k]      - number of operation needed to multiply matrices in LEFT and RIGHT subtrees
         tmp = mult_recursive(a, i, k) + mult_recursive(a, k + 1, j) + (a[i - 1] * a[j] * a[k])
-        ans = tmp if tmp < ans else ans
+        ans = min(ans, tmp)
     return ans
 
 

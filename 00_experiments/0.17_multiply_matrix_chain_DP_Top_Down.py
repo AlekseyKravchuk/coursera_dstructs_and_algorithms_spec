@@ -3,7 +3,8 @@
 # (minimization the number of multiplication operations by properly parenthesis placement)
 
 """
-Test input:
+==============
+Test input #1:
 4
 50 20
 20 1
@@ -12,12 +13,25 @@ Test input:
 
 Desired output:
 7000
+==============
+
+==============
+Test input #2:
+3
+1 2
+2 3
+3 4
+
+Desired output:
+18
+==============
 """
 from typing import List
 from math import inf
 
-N = 100  # maximum size of 2-dimensional DP table in each dimension
-dp_table = [[-1 for _ in range(N)] for _ in range(N)]
+# N = 20  # maximum size of 2-dimensional DP table in each dimension
+# dp_table = [[-1 for _ in range(N+1)] for _ in range(N+1)]
+dp_table = [[]]
 
 
 def check_if_matrix_sizes_consistent(sizes: List[int]) -> bool:
@@ -43,12 +57,12 @@ def mult_DP_TD(a: List[int], i, j) -> int:
 
     ans = inf
     for k in range(i, j):
-        # mult_recursive(a, i, k)   - multiplication operations needed to get intermediate matrix in LEFT subtree
-        # mult_recursive(a, k+1, j) - multiplication operations needed to get intermediate matrix in RIGHT subtree
+        # mult_DP_TD(a, i, k)   - operations needed to get intermediate matrix in LEFT subtree: Ai x Ai+1 x ... x Ak
+        # mult_DP_TD(a, k+1, j) - operations needed to get intermediate matrix in RIGHT subtree: Ak x Ak+1 x ... x Aj
         # a[i-1] * a[j] * a[k]      - number of operation needed to multiply matrices in LEFT and RIGHT subtrees
         tmp = mult_DP_TD(a, i, k) + mult_DP_TD(a, k + 1, j) + (a[i - 1] * a[j] * a[k])
-        ans = tmp if tmp < ans else ans
-    dp_table[i][j] = ans
+        ans = min(tmp, ans)
+        dp_table[i][j] = ans
     return ans
 
 
@@ -65,5 +79,11 @@ if __name__ == '__main__':
         # for test input: a=[50, 20, 20, 1, 1, 10, 10, 100] -> a=[50, 20, 1, 10, 100]
         a = [elm for i, elm in enumerate(a) if i == 0 or i % 2]
 
-        ans = mult_DP_TD(a, 1, n)
-        print(f'Min number of multiplication operations needed to multiply matrices: {dp_table[n][n]} operations')
+        # initialize dp_table with default values
+        for i in range(n+1):
+            dp_table.append([])
+            for j in range(n+1):
+                dp_table[i].append(-1)
+
+        ans = mult_DP_TD(a, 1, n)  # n - the number of matrices
+        print(f'Min number of multiplication operations needed to multiply matrices: {dp_table[1][n]} operations')
