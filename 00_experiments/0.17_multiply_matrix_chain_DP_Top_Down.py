@@ -44,8 +44,8 @@ def check_if_matrix_sizes_consistent(sizes: List[int]) -> bool:
 # get the minimum number of multiplication operations needed to multiply matrices Ai x Ai+1 x ... x Aj
 # that have the corresponding dimensions specified by array a:
 # for example: a = [2,   3,   7,   5,   20], n+1 numbers
-#                 A2x3 B3x7 C7x5 D5x20, n matrices
-def mult_DP_TD(a: List[int], i, j) -> int:
+#                 A2x3 B3x7 C7x5 D5x20,      n matrices
+def mult_DP_Top_Down(a: List[int], i, j) -> int:
     # Base case
     if i == j:
         dp_table[i][j] = 0
@@ -60,7 +60,9 @@ def mult_DP_TD(a: List[int], i, j) -> int:
         # mult_DP_TD(a, i, k)   - operations needed to get intermediate matrix in LEFT subtree: Ai x Ai+1 x ... x Ak
         # mult_DP_TD(a, k+1, j) - operations needed to get intermediate matrix in RIGHT subtree: Ak x Ak+1 x ... x Aj
         # a[i-1] * a[j] * a[k]      - number of operation needed to multiply matrices in LEFT and RIGHT subtrees
-        tmp = mult_DP_TD(a, i, k) + mult_DP_TD(a, k + 1, j) + (a[i - 1] * a[j] * a[k])
+        left = mult_DP_Top_Down(a, i, k)
+        right = mult_DP_Top_Down(a, k + 1, j)
+        tmp = left + right + (a[i - 1] * a[j] * a[k])
         ans = min(tmp, ans)
         dp_table[i][j] = ans
     return ans
@@ -85,5 +87,5 @@ if __name__ == '__main__':
             for j in range(n+1):
                 dp_table[i].append(-1)
 
-        ans = mult_DP_TD(a, 1, n)  # n - the number of matrices
+        ans = mult_DP_Top_Down(a, 1, n)  # n - the number of matrices
         print(f'Min number of multiplication operations needed to multiply matrices: {dp_table[1][n]} operations')
