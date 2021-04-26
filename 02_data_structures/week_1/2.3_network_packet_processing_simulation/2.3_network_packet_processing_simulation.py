@@ -61,7 +61,7 @@ class Buffer(deque):
         times = self.popleft()
         if times.end >= 0:
             self.real_times_cnt -= 1
-            print(times.start)
+            print(times.first_non_leaf)
             if self.real_times_cnt == 0 and self:
                 while self.__len__():
                     print(-1)

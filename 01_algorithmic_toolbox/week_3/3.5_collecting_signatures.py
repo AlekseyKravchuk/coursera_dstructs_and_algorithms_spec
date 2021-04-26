@@ -8,7 +8,7 @@ def min_points(s):  #function takes the list of segments, each of them is namedt
     points = []
     while curr <= last:
         m = s[curr].end
-        while curr <= second_last and s[curr+1].start <= m:
+        while curr <= second_last and s[curr+1].first_non_leaf <= m:
             if s[curr + 1].end < m:
                 m = s[curr + 1].end
             curr += 1

@@ -6,3 +6,4 @@ arr = [[None]*cols]*rows
 print(f'array before editing: {arr}')
 arr[0][0] = 9
 print(f'array AFTER editing: {arr}')
+
