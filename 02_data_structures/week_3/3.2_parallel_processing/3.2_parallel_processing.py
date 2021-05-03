@@ -63,7 +63,7 @@ class MinHeapForParallelProcessing:
 
     def handle_job(self, time2handle):  # change priority for top element in the min_heap depending on time2handle
         # self.arr[0][1] is worker_id of the top node in the heap
-        # self.arr[0][0] is next free time of the top node in the heap, it corresponds to time when worker started at
+        # self.arr[0][0] is next free time of the top node in the heap, it corresponds to time the worker started at
         self.solution.append(AssignedJob(self.arr[0][1], self.arr[0][0]))
         self.arr[0][0] += time2handle
 
