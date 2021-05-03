@@ -8,7 +8,7 @@ class MinHeap:
         self.max_size = len(nums)  # maximum size of array
         self.size = len(nums)  # actual size of heap, i.e. number of elements the heap occupies in the array
         self.first_non_leaf = floor((self.size - 2) / 2)  # index of first non-leaf node
-        self.isHeap = False
+        self.isMinHeap = False
 
     @staticmethod
     def left_child_idx(i):
@@ -18,21 +18,64 @@ class MinHeap:
     def right_child_idx(i):
         return 2 * i + 2
 
+    def printMinHeap(self):
+        for i in range(self.size):
+            print(self.arr[i], end=' ')
+        print()
+
+    def extractMin(self):
+        if not self.isMinHeap:
+            self.build_minHeap()
+
+        _min = self.arr[0]
+        self.swap_first_and_last()
+        self.size -= 1
+        self.sift_down(0)
+
+        return _min
+
+    def getMin(self):
+        if self.isMinHeap:
+            return self.arr[0]
+        else:
+            self.build_minHeap()
+            return self.arr[0]
+
     def swap_first_and_last(self):
         self.arr[0], self.arr[self.size - 1] = self.arr[self.size - 1], self.arr[0]
 
     def descendingHeapSort(self):
-        if not self.isHeap:
+        if not self.isMinHeap:
             self.build_minHeap()
         for i in range(self.size - 1):
             self.swap_first_and_last()
             self.size -= 1
             self.sift_down(0)
 
+    def insert(self, num):
+        if not self.isMinHeap:
+            self.build_minHeap()
+
+        self.arr.append(num)
+        self.size += 1
+        self.sift_up(self.size - 1)
+
+
     def build_minHeap(self):
         for i in range(self.first_non_leaf, -1, -1):
             self.sift_down(i)
-        self.isHeap = True
+        self.isMinHeap = True
+
+    def sift_up(self, i):
+        parent_idx = floor((i-1) / 2)
+        if parent_idx < 0:
+            return
+
+        if self.arr[i] < self.arr[parent_idx]:
+            self.arr[i], self.arr[parent_idx] = self.arr[parent_idx], self.arr[i]
+            self.sift_up(parent_idx)
+        else:
+            return
 
     def sift_down(self, i):
         min_idx = i
@@ -57,8 +100,16 @@ if __name__ == '__main__':
 
     h = MinHeap(nums)
     h.build_minHeap()
-    h.descendingHeapSort()
-    print(h.arr)
+    print(f'heap before extraction: ')
+    h.printMinHeap()
+    _min = h.extractMin()
+    print(f'heap AFTER extraction:')
+    h.printMinHeap()
+
+    # h.build_minHeap()
+    # h.descendingHeapSort()
+
+    # print(h.arr)
 
     # print(len(h.solution))
     # for pair in h.solution:
