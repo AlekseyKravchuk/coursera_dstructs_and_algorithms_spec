@@ -24,5 +24,5 @@ def gcd_extended(a, b):
 if __name__ == '__main__':
     a, b = map(int, input().split())
     # print(f'gcd({a},{b}) = {gcd(a, b)}')
-    # print(f'gcd_extended({a},{b}) = {gcd_extended(a, b)}')
-    print(f'gcd_rec({a},{b}) = {gcd_recursive(a, b)}')
+    print(f'gcd_extended({a},{b}) = {gcd_extended(a, b)}')
+    # print(f'gcd_rec({a},{b}) = {gcd_recursive(a, b)}')
