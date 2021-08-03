@@ -1,6 +1,3 @@
-from primality_testing import is_prime
-
-
 def factorization(n):
     ans = []
     initial = n
