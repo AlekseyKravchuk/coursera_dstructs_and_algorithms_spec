@@ -33,8 +33,9 @@ def factorization_naive_recursive(n):
 
 
 if __name__ == '__main__':
-    n = 120
-    # n = 12
+    # n = 120
+    n = 500009
+
     print(factorization_naive(n))
     print(factorization(n))
     # print(factor_naive(n))
