@@ -24,6 +24,7 @@ class SubstrEq:
 
         self.results = []
 
+    # h1[i] = H(s[0]s[1]...,s[i-1]), h1[0] = 0 by default
     def precompute_suffixes(self):
         for i in range(1, self.L + 1):
             self.h1[i] = (self.x * self.h1[i - 1] + ord(self.s[i-1])) % self.m1

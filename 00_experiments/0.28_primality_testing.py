@@ -20,8 +20,14 @@ def is_prime_naive(n):
 
 
 def print_check_if_prime(n):
-    s = 'The number {n} is {state}.'.format(n=n, state='prime' if is_prime(n) else 'not prime')
+    prime_flag = is_prime(n)
+    s = 'The number {n} is {state}.'.format(n=n, state='prime' if prime_flag else 'not prime')
     print(s)
+    if not prime_flag:
+        n += 1
+        while not is_prime(n):
+            n += 1
+        print(f'The nearest prime number is: {n}')
 
 
 def stress_test(end=1000000):

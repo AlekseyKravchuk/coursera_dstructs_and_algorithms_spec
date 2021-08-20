@@ -19,10 +19,14 @@ class QueryHandler:
         self.table = [None] * self.m
 
     def get_hash(self, s):
-        _sum = 0
-        for i, ch in enumerate(s):
-            _sum += ord(ch) * self.x ** i
-        return (_sum % self.p) % self.m
+        coeffs = list(map(ord, s[::-1]))  # coefficients of polynomial of degree 'len(s) - 1'
+        h = 0
+
+        # calculating polynomial value using Horner's rule
+        for i, _ in enumerate(coeffs):
+            h = (h * self.x + coeffs[i]) % self.p
+
+        return h % self.m
 
     @staticmethod
     def read_query():
