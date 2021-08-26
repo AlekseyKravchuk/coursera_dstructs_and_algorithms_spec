@@ -26,6 +26,7 @@ class QueryHandler:
         for i, _ in enumerate(coeffs):
             h = (h * self.x + coeffs[i]) % self.p
 
+        # return the index of slot (bucket) in hash table
         return h % self.m
 
     @staticmethod
@@ -80,7 +81,6 @@ if __name__ == '__main__':
     proc_obj = QueryHandler(int(input()))  # QueryHandler takes the number of available buckets for hash function
     proc_obj.process_all_queries()
 
-
 # ========== for debugging purposes ==========
 # if __name__ == '__main__':
 #     in_file_name = './tests/06'
@@ -90,7 +90,3 @@ if __name__ == '__main__':
 #         sys.stdout = out_file
 #         proc_obj = QueryHandler(int(input()))  # QueryHandler takes the number of available buckets for hash function
 #         proc_obj.process_all_queries()
-
-
-
-
