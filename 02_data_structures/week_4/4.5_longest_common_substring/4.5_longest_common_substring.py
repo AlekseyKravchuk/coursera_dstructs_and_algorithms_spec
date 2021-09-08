@@ -1,22 +1,19 @@
-from sys import exit
 from collections import namedtuple
-from math import ceil
 
 Query = namedtuple('Query', ['s1', 's2'])
 
-x = 35
-# p1 = 1000000007
-# p2 = 1000000009
-
-# p1 = 10007
-# p2 = 701
+x = 29
+# p1 = 263130836933693530167218012159999999
+# p2 = 8683317618811886495518194401279999999
 
 p1 = 1000000000039
 p2 = 1000000000061
 
-# the number of buckets, it should be enough to store all substring hashes with reasonable load factor
-M = 100003
-# M = 50
+# Try to pick the proper value of the buckets number
+# the number of buckets should be enough to store all substring hashes with reasonable load factor
+
+# Works, but leads to collisions
+M = 109003
 
 
 def get_substr_hashes(s, win_len, modulo):
@@ -31,6 +28,7 @@ def get_substr_hashes(s, win_len, modulo):
     w = 0
     for i in range(win_len):
         w = (x * w + coeffs[i]) % modulo
+
     # h[w % M] = (start_pos_of_substring, its_lenght)
     h[w % M] = (0, win_len)
 
@@ -62,7 +60,7 @@ def get_LCS_positions(s1, s2, ht1, ht2, ss_len, p1, p2):
             # return (starting_pos_in_s1, starting_pos_in_s2, substring_len)
             return ht1[hash1][0], 0, ss_len
         else:
-            exit(f"Collision was found: s1 = {s1}, s2 = {s2}")
+            return None
 
     # Calculate hashes of substrings of 'ss_len' length in string 's2' using rolling hash for 2 different modules
     for i in range(1, L - ss_len + 1):
@@ -75,8 +73,6 @@ def get_LCS_positions(s1, s2, ht1, ht2, ss_len, p1, p2):
             if ht1[hash1] == ht2[hash2]:
                 # return (starting_pos_in_s1, starting_pos_in_s2, substring_len)
                 return ht1[hash1][0], i, ss_len
-            else:
-                exit(f"Collision was found: s1 = {s1}, s2 = {s2}")
     # if we reach this place then there is no common substring of length ss_len
     return None
 
@@ -97,35 +93,35 @@ def search_LCS(s1, s2):
 
     lcs = None
     prev_best_lcs = None
-    while low != high:
+    while low <= high:
         mid = low + (high - low) // 2
-        # mid = low + ceil((high - low)/2)
 
-        # lengths[mid] is current length to be checked
+        # lengths[mid] is current length to be checked for LCS
         ht1 = get_substr_hashes(s1, lengths[mid], p1)
         ht2 = get_substr_hashes(s1, lengths[mid], p2)
 
-        # 'lcs' tuple has the following spec: (start_index_in_s1, start_index_in_s2, ss_len)
+        # 'lcs' tuple has the following spec: (start_index_in_s1, start_index_in_s2, substring_len)
         lcs = get_LCS_positions(s1, s2, ht1, ht2, lengths[mid], p1, p2)
         if lcs is not None:
             prev_best_lcs = lcs
             low = mid + 1
         else:
             high = mid - 1
-            if high < 0:
-                break
-            if high < low:
-                lcs = prev_best_lcs
-                break
 
-    # if we reach there than low == r, so we found LCS (or not found)
     if lcs is not None:
         if direct_order:
             print(*lcs)
         else:
             print(lcs[1], lcs[0], lcs[2])
-    else:
-        print(0, 0, 0)
+    else:  # lcs is None
+        # check if there is prev_best_lcs
+        if prev_best_lcs is not None:
+            if direct_order:
+                print(*prev_best_lcs)
+            else:
+                print(prev_best_lcs[1], prev_best_lcs[0], prev_best_lcs[2])
+        else:  # prev_best_lcs is also None
+            print(0, 0, 0)
 
 
 if __name__ == '__main__':
