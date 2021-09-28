@@ -7,7 +7,7 @@ p1 = 1000000000039
 p2 = 1000000000061
 
 
-# calculates hashes for all possible substrings of length 'win_len' of a given string 's' by given 'modulo'
+# calculates hashes for all possible substrings of length 'win_len' of a given string 's' by given modulo 'p'
 def get_substr_hashes(s, win_len, p):
     L = len(s)
     coeffs = list(map(ord, s))
@@ -16,16 +16,16 @@ def get_substr_hashes(s, win_len, p):
     # precomputed values of x^(str_len-1) by given modulo
     mult = pow(x, win_len - 1, p)
 
-    # Calculate the hash value of first window, w
+    # Calculate the hash value of the first window
     w = 0
     for i in range(win_len):
         w = (x * w + coeffs[i]) % p
 
-    # d[w] = (start_pos_of_substring, its_lenght)
+    # d[w] = (start_pos_of_substring, its_length)
     d[w] = (0, win_len)
 
-    # Calculate hashes for all substrings of length=roll_hash_win_len of a given string
-    for i in range(1, L - win_len + 1):
+    # Calculate hashes for all substrings of length 'win_len' of a given string 's'
+    for i in range(1, L-win_len+1):
         next_idx = i + win_len - 1
         w = ((w - mult * coeffs[i - 1]) * x + coeffs[next_idx]) % p
         d[w] = (i, win_len)
@@ -37,8 +37,8 @@ def get_LCS_positions(s2, d1, d2, ss_len, p1, p2):
     coeffs = list(map(ord, s2))
 
     # precomputed values of x^(str_len-1) by given modules
-    mult1 = pow(x, ss_len - 1, p1)
-    mult2 = pow(x, ss_len - 1, p2)
+    mult1 = pow(x, ss_len-1, p1)
+    mult2 = pow(x, ss_len-1, p2)
 
     w1, w2 = 0, 0
     # Calculate the hash value of first window
@@ -65,12 +65,27 @@ def get_LCS_positions(s2, d1, d2, ss_len, p1, p2):
     return None
 
 
+# adapted bin_search algorithm to solve the problem
 def search_LCS(s1, s2):
     if len(s1) <= len(s2):
         direct_order = True
     else:
         direct_order = False
         s1, s2 = s2, s1
+    # ****************** HOW TO UNDERSTAND BIN_SEARCH IMPLEMENTATION TO SOLVE THE PROBLEM ******************
+    """
+    Imagine you have 2 strings: T and S both of length 10. The longest common substring(LCS) is of any size from 0 to 10
+    You can look for it in the following way:
+        Check if the LCS has length 10
+        If yes: success, if not: check if the LCS has length 9:
+        If yes: success, if not: check if the LCS has length 8
+        Etc. etc. down to 0 if T and S have no common substrings
+    Or you can use BIN_SEARCH for that:
+        Check if there exist common substring of length 5
+        If yes, the LCS length will be between 5 and 10, so the next check to narrow the scope will be for length 7
+        If no, the LCS length will be between 0 and 4, so the next check will be for 2
+        etc. as soon as you narrow the number to the right one
+    """
 
     sz = len(s1)
 

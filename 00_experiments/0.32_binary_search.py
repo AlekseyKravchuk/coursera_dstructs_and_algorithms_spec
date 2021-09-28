@@ -1,4 +1,19 @@
 from bisect import bisect_left
+from bisect import bisect_right
+
+
+def bin_search_recursive(arr, left, right, key2search):
+    # placeholder for BASE CASE
+    if left > right:
+        return -1
+
+    mid = left + (right - left) // 2
+    if key2search == arr[mid]:
+        return mid
+    elif key2search < arr[mid]:
+        return bin_search_recursive(arr, left, mid-1, key2search)
+    elif key2search > arr[mid]:
+        return bin_search_recursive(arr, mid+1, right, key2search)
 
 
 def bin_search(arr, key):
@@ -17,17 +32,21 @@ def bin_search(arr, key):
     return -1
 
 
-def bin_search_bisect(a, key, l=0, h=None):
+def bin_search_bisect(arr, key, l=0, h=None):
+    print(f'array: {arr}')
+    print(f'key to search: {key}')
     if h is None:
-        h = len(a)
-    pos = bisect_left(a, key, l, h)
-    return pos if pos != h and a[pos] == key else -1
+        h = len(arr)
+    pos = bisect_left(arr, key, l, h)
+    return pos if pos != h and arr[pos] == key else -1
 
 
 if __name__ == '__main__':
-    a = [2, 3, 4, 10, 40]
+    arr = [2, 3, 4, 10, 40, 50, 60]
     key = 40
-    res = bin_search(a, key)
-    print(f'element was found at index {res}.' if res != -1 else f'element key = {key} isn\'t present in array {a}')
-    res_by_bisect = bin_search_bisect(a, key)
-    print(f'by bisect: {res_by_bisect}')
+    my_res = bin_search(arr, key)
+    my_res_recursive = bin_search_recursive(arr, 0, len(arr) - 1, key)
+    res_by_bisect = bin_search_bisect(arr, key)
+    print(f'output by bisect: {res_by_bisect}')
+    print(f'output by binsearch: {my_res}')
+    print(f'output by binsearch RECURSIVE: {my_res_recursive}')

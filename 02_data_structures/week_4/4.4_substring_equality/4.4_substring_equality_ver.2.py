@@ -30,8 +30,8 @@ def process_queries(s, queries):
 
     def handle_query():
         # calculate hashes for substring 's[a:a+l]'
-        ss1_hash_q1 = (h1[q.a+q.len] - mult1 * h1[q.a]) % q1
-        ss1_hash_q2 = (h2[q.a + q.len] - mult2 * h2[q.a]) % q2
+        ss1_hash_q1 = (h1[q.arr + q.len] - mult1 * h1[q.arr]) % q1
+        ss1_hash_q2 = (h2[q.arr + q.len] - mult2 * h2[q.arr]) % q2
 
         # calculate hashes for substring 's[b:b+l]'
         ss2_hash_q1 = (h1[q.b + q.len] - mult1 * h1[q.b]) % q1

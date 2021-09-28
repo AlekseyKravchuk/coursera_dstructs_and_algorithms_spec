@@ -39,10 +39,10 @@ class SubstrEq:
         mult_h1 = pow(self.x, q.l, self.m1)
         mult_h2 = pow(self.x, q.l, self.m2)
 
-        h_s1_mod_m1 = (self.h1[q.a + q.l] - ((mult_h1 * self.h1[q.a]) % self.m1)) % self.m1
+        h_s1_mod_m1 = (self.h1[q.arr + q.l] - ((mult_h1 * self.h1[q.arr]) % self.m1)) % self.m1
         h_s2_mod_m1 = (self.h1[q.b + q.l] - ((mult_h1 * self.h1[q.b]) % self.m1)) % self.m1
 
-        h_s1_mod_m2 = (self.h2[q.a + q.l] - ((mult_h2 * self.h2[q.a]) % self.m2)) % self.m2
+        h_s1_mod_m2 = (self.h2[q.arr + q.l] - ((mult_h2 * self.h2[q.arr]) % self.m2)) % self.m2
         h_s2_mod_m2 = (self.h2[q.b + q.l] - ((mult_h2 * self.h2[q.b]) % self.m2)) % self.m2
 
         if h_s1_mod_m1 == h_s2_mod_m1 and h_s1_mod_m2 == h_s2_mod_m2:
