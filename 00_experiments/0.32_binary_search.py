@@ -3,7 +3,7 @@ from bisect import bisect_right
 
 
 def bin_search_recursive(arr, left, right, key2search):
-    # placeholder for BASE CASE
+    # BASE CASE
     if left > right:
         return -1
 
