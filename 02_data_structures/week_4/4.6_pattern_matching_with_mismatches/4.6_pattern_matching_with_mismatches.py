@@ -3,12 +3,8 @@ from collections import namedtuple
 
 # k: maximum allowed number of mismatches;
 # s: string to search in;
-# p: pattern to search for in string 's' (with at most 'k' mismatches)
+# p: pattern to search for in string 's' with at most 'k' mismatches
 Request = namedtuple('Request', ['k', 's', 'p'])
-
-x = 59
-q1 = 10 ** 9 + 7
-q2 = 10 ** 9 + 9
 
 
 def get_requests():
@@ -16,81 +12,131 @@ def get_requests():
     while True:
         try:
             line = input()
-            k, s, p = line.split()
         except EOFError:
             break
-        requests.append(Request(int(k), s, p))
+        if line:
+            k, s, p = line.split()
+            requests.append(Request(int(k), s, p))
+        else:
+            break
     return requests
 
 
-# precompute hashes for all prefixes in string 's'
-def get_suff_hashes(s):
-    # h[prefix_length] is the hash of string prefix of length 'prefix_length'
-    # or it can be thought such as h[3] is a hash for substring s1s2s3 with 1-based index numeration
-    # h[0] = 0 by default
+# class for Pattern Matching with Mismatches
+class PMM:
+    x = 59
+    q1 = 10**9 + 7
+    q2 = 10**9 + 9
+
+    def __init__(self, r: Request):
+        self.k = r.k
+        self.s = r.s
+        self.p = r.p
+
+        # placeholder for resulting array containing positions 'i' where 'p' occurs in 's' with at most 'k' mismatches
+        self.res = []
+
+        # We need to store precomputed hashes (given by 2 different modulo)
+        # of all SUFFIXES in string 's' and in pattern 'p'; so 4 holders are needed
+        #  self.sh1[i] holds the hash of suffix of length 'i', so self.sh1[0] = 0
+        self.s_suff_q1 = [None] * (len(self.s) + 1)
+        self.s_suff_q2 = deepcopy(self.s_suff_q1)
+        self.p_suff_q1 = [None] * (len(self.p) + 1)
+        self.p_suff_q2 = deepcopy(self.p_suff_q1)
+        self.s_suff_q1[0] = self.s_suff_q2[0] = self.p_suff_q1[0] = self.p_suff_q2[0] = 0
+
+        # Additionally to prevent wasteful recurrent computations we need to create 2D-arrays
+        # MxM (for string 's') and NxN (for pattern 'p') designed to store hashes of overlapping parts in 's' and in 'p'
+        # specified by 'win_start' = i (offset in 's') and left and right positions.
+        # So self.s_h_q1[i][j] correspond to hash of substring 's[i:j+1]' given by modulo PMM.q1
+        M, N = len(self.s), len(self.p)
+        self.sh_q1 = [[None for _ in range(M)] for _ in range(M)]
+        self.sh_q2 = [[None for _ in range(M)] for _ in range(M)]
+        self.ph_q1 = [[None for _ in range(N)] for _ in range(N)]
+        self.ph_q2 = [[None for _ in range(N)] for _ in range(N)]
+
+        # And finally to prevent wasteful recurrent computations there is needed to store mismatch count for some
+        # overlapping in 's' and in 'p' specified by tuple (win_start, s_left, s_right)
+        self.mismatches_2D = [[0 for _ in range(M)] for _ in range(M)]
+
+        # calculate hashes for all possible suffixes in string 's' and pattern 'p'
+        self.fill_suff_hashes()
+
+    # calculate hashes of suffixes in 'self.s' and 'self.p'
+    # self.sh1[i] is hash for substring s[0]s[1]s[2]...s[i-1]
     # for example:
     # s = 'trololo', len(s)=7 =>
     # we should calculate hashes for 7 prefixes: 1)'t', 2)'tr', 3)'tro', 4)'trol', 5)'trolo', 6)'trolol', 7)'trololo'
-    h1 = [None]*(len(s)+1)
-    h2 = deepcopy(h1)
-    h1[0] = h2[0] = 0
+    def fill_suff_hashes(self):
+        s_codes = [ord(ch) for ch in self.s]
+        p_codes = [ord(ch) for ch in self.p]
 
-    char_codes = [ord(ch) for ch in s]
-    # calculating hashes using Horner's rule
-    for i, ch_code in enumerate(char_codes, start=1):
-        h1[i] = (x * h1[i-1] + ch_code) % q1
-        h2[i] = (x * h2[i-1] + ch_code) % q2
-    return h1, h2
+        # calculating hashes of all suffixes in 's' and in 'p' using Horner's rule
+        for i, ch_code in enumerate(s_codes, start=1):
+            self.s_suff_q1[i] = (PMM.x * self.s_suff_q1[i-1] + ch_code) % PMM.q1
+            self.s_suff_q2[i] = (PMM.x * self.s_suff_q1[i-1] + ch_code) % PMM.q2
+        for j, ch_code in enumerate(p_codes, start=1):
+            self.p_suff_q1[j] = (PMM.x * self.p_suff_q1[j-1] + ch_code) % PMM.q1
+            self.p_suff_q2[j] = (PMM.x * self.p_suff_q1[j-1] + ch_code) % PMM.q2
 
+    # set hashes of substrings specified by window start position, 'i' and 0-based left and right (INCLUSIVE) indices
+    # of overlapping substrings in 's' and in 'p'
+    # self.sh_q1[i][j] corresponds to hash of substring in 's': 's[left:right+1]' given by modulo PMM.q1
+    def is_overlapped_parts_equal(self, i, l, r):
+        power = r - l + 1
+        p_l, p_r = l - i, r - i
 
-# get hash of substring specified by 0-based 'left' and 'right'(INCLUSIVE) indices
-# 'h': array of precomputed hashes, h[0] = 0
-def get_hashes(h1, h2, left, right):
-    win_len = right-left+1
-    hash1 = (h1[right+1] - pow(x, win_len, q1) * h1[left]) % q1
-    hash2 = (h2[right+1] - pow(x, win_len, q2) * h2[left]) % q2
-    return hash1, hash2
+        if self.sh_q1[l][r] is None:
+            self.sh_q1[l][r] = (self.s_suff_q1[r + 1] - pow(PMM.x, power, PMM.q1) * self.s_suff_q1[l]) % PMM.q1
+            self.sh_q2[l][r] = (self.s_suff_q2[r + 1] - pow(PMM.x, power, PMM.q2) * self.s_suff_q1[l]) % PMM.q2
+            self.ph_q1[p_l][p_r] = (self.p_suff_q1[p_r+1] - pow(PMM.x, power, PMM.q1) * self.p_suff_q1[p_l]) % PMM.q1
+            self.ph_q2[p_l][p_r] = (self.p_suff_q2[p_r+1] - pow(PMM.x, power, PMM.q2) * self.p_suff_q2[p_l]) % PMM.q2
 
+        if self.sh_q1[l][r] == self.ph_q2[p_l][p_r] and self.sh_q2[l][r] == self.ph_q2[p_l][p_r]:
+            return True
+        else:
+            return False
 
-# hash-based string comparison
-def is_equal(s_h1, s_h2, p_h1, p_h2, left, right):
-    s_hash_q1, s_hash_q2 = get_hashes(s_h1, s_h2, left, right)
-    p_hash_q1, p_hash_q2 = get_hashes(p_h1, p_h2, left, right)
-
-
-def get_mid(left, right):
-    return left + (right - left) // 2
-
-# k: maximum number of mismatches
-# s: string to search within
-# p: pattern, string to search for in string 's' with at most 'k' mismatches
-def handle_request(k, s, p):
-
-    # nested function; counts mismatches using binary search algorithm and hashing
-    def count_mismatches(i=0, left=0, right=len(p)-1):
-        mismatches = 0
-        p_left = left-i
-        p_right = right-i
-
-        # BASE CASE
-        # TODO
-        if left > right or mismatches > k or hash(overlapped_part_in_s) == hash(overlapped_part_in_p):
-            hash(overlapped_part_in_s) = hash(s[left]s[left+1]...s[right]) - pow(x, right-left+1, q) * hash(s[left]s[left+1]...s[left-1])
+    # count_mismatches will be invoked recursively
+    def count_mismatches(self, i, l, r, mismatches=0):
+        # BASE CASES #1, #2, #3
+        flag = self.is_overlapped_parts_equal(i, l, r)
+        if l > r or flag or mismatches > self.k:
             return mismatches
+        # BASE CASE #4: the number of mismatches for current overlapping has been calculated recently
+        if self.mismatches_2D[l][r] > 0:
+            return self.mismatches_2D[l][r]
 
-        s_mid, p_mid = get_mid(left, right), get_mid(left-i, right-i)
-
-        if s[s_mid] != p[p_mid]:
+        mid = l + (r - l) // 2
+        if self.s[mid] != self.p[mid-i]:
+            if self.k == 0:
+                return self.k + 200
             mismatches += 1
+            # BASE CASE #5: the number of mismatches became one more than allowed 'k'
+            if mismatches > self.k:
+                return mismatches
 
-        # TODO!!!!!!
-        if get_hashes(get_suff_hashes(s[s_left:s_right + 1])) != get_hashes(
-                get_suff_hashes(p[s_left:s_right + 1])):
-            pass
+        mismatches += self.count_mismatches(i, l, mid - 1, mismatches)
+        mismatches += self.count_mismatches(i, mid + 1, r, mismatches)
+        self.mismatches_2D[l][r] = mismatches
+        return mismatches
 
+    def handle_request(self):
+        for i in range(len(self.s) - len(self.p) + 1):
+            n_mismatches = self.count_mismatches(i, 0, len(self.p)-1)
+            if n_mismatches and self.k == 0:
+                print(0)
+                return
+            if n_mismatches <= self.k:
+                self.res.append(i)
+        print(n_mismatches, *self.res)
 
 
 if __name__ == '__main__':
     requests = get_requests()
+
     for r in requests:
-        print(r)
+        pmm = PMM(r)
+        pmm.handle_request()
+    # pmm = PMM(requests[0])
+    # pmm.handle_request()
