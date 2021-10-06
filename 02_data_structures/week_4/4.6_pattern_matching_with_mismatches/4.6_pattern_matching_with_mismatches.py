@@ -1,5 +1,6 @@
 from copy import deepcopy
 from collections import namedtuple
+from contextlib import redirect_stdout
 
 # k: maximum allowed number of mismatches;
 # s: string to search in;
@@ -38,12 +39,12 @@ class PMM:
 
         # We need to store precomputed hashes (given by 2 different modulo)
         # of all SUFFIXES in string 's' and in pattern 'p'; so 4 holders are needed
-        #  self.sh1[i] holds the hash of suffix of length 'i', so self.sh1[0] = 0
-        self.s_suff_q1 = [None] * (len(self.s) + 1)
+        # self.s_suff_q1[i] holds the hash of suffix of length 'i', so self.sh1[0] = 0
+        self.s_suff_q1 = [0] * (len(self.s) + 1)
         self.s_suff_q2 = deepcopy(self.s_suff_q1)
-        self.p_suff_q1 = [None] * (len(self.p) + 1)
+
+        self.p_suff_q1 = [0] * (len(self.p) + 1)
         self.p_suff_q2 = deepcopy(self.p_suff_q1)
-        self.s_suff_q1[0] = self.s_suff_q2[0] = self.p_suff_q1[0] = self.p_suff_q2[0] = 0
 
         # Additionally to prevent wasteful recurrent computations we need to create 2D-arrays
         # MxM (for string 's') and NxN (for pattern 'p') designed to store hashes of overlapping parts in 's' and in 'p'
@@ -57,10 +58,11 @@ class PMM:
 
         # And finally to prevent wasteful recurrent computations there is needed to store mismatch count for some
         # overlapping in 's' and in 'p' specified by tuple (win_start, s_left, s_right)
-        self.mismatches_2D = [[0 for _ in range(M)] for _ in range(M)]
+        self.mismatches_2D = [[None for _ in range(M)] for _ in range(M)]
 
         # calculate hashes for all possible suffixes in string 's' and pattern 'p'
         self.fill_suff_hashes()
+        # *********** END of __init__ ***********
 
     # calculate hashes of suffixes in 'self.s' and 'self.p'
     # self.sh1[i] is hash for substring s[0]s[1]s[2]...s[i-1]
@@ -83,14 +85,22 @@ class PMM:
     # of overlapping substrings in 's' and in 'p'
     # self.sh_q1[i][j] corresponds to hash of substring in 's': 's[left:right+1]' given by modulo PMM.q1
     def is_overlapped_parts_equal(self, i, l, r):
-        power = r - l + 1
+        y = r - l + 1
         p_l, p_r = l - i, r - i
 
-        if self.sh_q1[l][r] is None:
-            self.sh_q1[l][r] = (self.s_suff_q1[r + 1] - pow(PMM.x, power, PMM.q1) * self.s_suff_q1[l]) % PMM.q1
-            self.sh_q2[l][r] = (self.s_suff_q2[r + 1] - pow(PMM.x, power, PMM.q2) * self.s_suff_q1[l]) % PMM.q2
-            self.ph_q1[p_l][p_r] = (self.p_suff_q1[p_r+1] - pow(PMM.x, power, PMM.q1) * self.p_suff_q1[p_l]) % PMM.q1
-            self.ph_q2[p_l][p_r] = (self.p_suff_q2[p_r+1] - pow(PMM.x, power, PMM.q2) * self.p_suff_q2[p_l]) % PMM.q2
+        # there is no offset, so hash for substring is equal to hash of corresponding suffix
+        if i == 0 and l == 0:
+            if self.sh_q1[l][r] is None:
+                self.sh_q1[l][r] = self.s_suff_q1[r + 1]
+                self.sh_q2[l][r] = self.s_suff_q2[r + 1]
+                self.ph_q1[p_l][p_r] = self.p_suff_q1[p_r+1]
+                self.ph_q2[p_l][p_r] = self.p_suff_q2[p_r+1]
+        else:
+            if self.sh_q1[l][r] is None:
+                self.sh_q1[l][r] = (self.s_suff_q1[r + 1] - pow(PMM.x, y, PMM.q1) * self.s_suff_q1[l]) % PMM.q1
+                self.sh_q2[l][r] = (self.s_suff_q2[r + 1] - pow(PMM.x, y, PMM.q2) * self.s_suff_q1[l]) % PMM.q2
+                self.ph_q1[p_l][p_r] = (self.p_suff_q1[p_r+1] - pow(PMM.x, y, PMM.q1) * self.p_suff_q1[p_l]) % PMM.q1
+                self.ph_q2[p_l][p_r] = (self.p_suff_q2[p_r+1] - pow(PMM.x, y, PMM.q2) * self.p_suff_q2[p_l]) % PMM.q2
 
         if self.sh_q1[l][r] == self.ph_q2[p_l][p_r] and self.sh_q2[l][r] == self.ph_q2[p_l][p_r]:
             return True
@@ -99,18 +109,35 @@ class PMM:
 
     # count_mismatches will be invoked recursively
     def count_mismatches(self, i, l, r, mismatches=0):
-        # BASE CASES #1, #2, #3
+        # **** BASE CASE #1 ****
+        if l > r:
+            return 0
+
+        # **** BASE CASE #2****:
+        if l == r:
+            if self.s[l] == self.p[l-i]:
+                return 0
+            else:
+                return 1
+
+        # **** BASE CASE #3****:
         flag = self.is_overlapped_parts_equal(i, l, r)
-        if l > r or flag or mismatches > self.k:
+        if flag:
             return mismatches
-        # BASE CASE #4: the number of mismatches for current overlapping has been calculated recently
-        if self.mismatches_2D[l][r] > 0:
+
+        # **** BASE CASE #4 ****
+        if mismatches > self.k:
+            return mismatches
+
+        # **** BASE CASE #5 ****: the number of mismatches for current overlapping has been calculated recently
+        if self.mismatches_2D[l][r] is not None:
             return self.mismatches_2D[l][r]
 
         mid = l + (r - l) // 2
-        if self.s[mid] != self.p[mid-i]:
+        p_mid = mid-i if mid != 0 else mid
+        if self.s[mid] != self.p[p_mid]:
             if self.k == 0:
-                return self.k + 200
+                return self.k + 10
             mismatches += 1
             # BASE CASE #5: the number of mismatches became one more than allowed 'k'
             if mismatches > self.k:
@@ -123,19 +150,27 @@ class PMM:
 
     def handle_request(self):
         for i in range(len(self.s) - len(self.p) + 1):
-            n_mismatches = self.count_mismatches(i, 0, len(self.p)-1)
-            if n_mismatches and self.k == 0:
-                print(0)
-                return
+            n_mismatches = self.count_mismatches(i, i, i+len(self.p)-1)
             if n_mismatches <= self.k:
                 self.res.append(i)
-        print(n_mismatches, *self.res)
+        # ++++++++++++++ DEBUGGING ++++++++++++++
+        with open('./tests/02.out', 'a') as f:
+            with redirect_stdout(f):
+                if not self.res:
+                    print(0)
+                else:
+                    print(len(self.res), *self.res)
+        # ++++++++++++++ END of DEBUGGING ++++++++++++++
+        # if not self.res:
+        #     print(0)
+        # else:
+        #     print(len(self.res), *self.res)
 
 
 if __name__ == '__main__':
     requests = get_requests()
 
-    for r in requests:
+    for n, r in enumerate(requests):
         pmm = PMM(r)
         pmm.handle_request()
     # pmm = PMM(requests[0])
