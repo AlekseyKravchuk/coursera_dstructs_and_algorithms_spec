@@ -1,11 +1,19 @@
+import random
 from copy import deepcopy
 from collections import namedtuple
-
 
 # k: maximum allowed number of mismatches;
 # s: string to search in;
 # p: pattern to search for in string 's' with at most 'k' mismatches
 Request = namedtuple('Request', ['k', 's', 'p'])
+
+
+def rand_str(str_len):
+    # alphabet = string.ascii_lowercase
+    alphabet = 'abc'
+    # return ''.join(random.choice(alphabet) for i in range(str_len))
+    mylist = ["a", "b", "c"]
+    return ''.join(random.choices(mylist, weights=[1, 1, 2], k=str_len))
 
 
 def get_requests():
@@ -74,11 +82,11 @@ class PMM:
 
         # calculating hashes of all suffixes in 's' and in 'p' using Horner's rule by 2 different modules: PMM.q1,PMM.q2
         for i, ch_code in enumerate(s_codes, start=1):
-            self.s_suff_q1[i] = (PMM.x * self.s_suff_q1[i-1] + ch_code) % PMM.q1
-            self.s_suff_q2[i] = (PMM.x * self.s_suff_q1[i-1] + ch_code) % PMM.q2
+            self.s_suff_q1[i] = (PMM.x * self.s_suff_q1[i - 1] + ch_code) % PMM.q1
+            self.s_suff_q2[i] = (PMM.x * self.s_suff_q1[i - 1] + ch_code) % PMM.q2
         for j, ch_code in enumerate(p_codes, start=1):
-            self.p_suff_q1[j] = (PMM.x * self.p_suff_q1[j-1] + ch_code) % PMM.q1
-            self.p_suff_q2[j] = (PMM.x * self.p_suff_q1[j-1] + ch_code) % PMM.q2
+            self.p_suff_q1[j] = (PMM.x * self.p_suff_q1[j - 1] + ch_code) % PMM.q1
+            self.p_suff_q2[j] = (PMM.x * self.p_suff_q1[j - 1] + ch_code) % PMM.q2
 
     # check if current overlapped regions in string 'self.s' and in pattern 'self.p' are the same
     # overlapping region is specified by window start position 'i' and 0-based 'l' and 'r' (INCLUSIVE) indices
@@ -93,15 +101,15 @@ class PMM:
             if self.sh_q1[l][r] is None:
                 self.sh_q1[l][r] = self.s_suff_q1[r + 1]
                 self.sh_q2[l][r] = self.s_suff_q2[r + 1]
-                self.ph_q1[p_l][p_r] = self.p_suff_q1[p_r+1]
-                self.ph_q2[p_l][p_r] = self.p_suff_q2[p_r+1]
+                self.ph_q1[p_l][p_r] = self.p_suff_q1[p_r + 1]
+                self.ph_q2[p_l][p_r] = self.p_suff_q2[p_r + 1]
         else:
             if self.sh_q1[l][r] is None:
-                self.sh_q1[l][r] = (self.s_suff_q1[r+1] - pow(PMM.x, y, PMM.q1) * self.s_suff_q1[l]) % PMM.q1
-                self.sh_q2[l][r] = (self.s_suff_q2[r+1] - pow(PMM.x, y, PMM.q2) * self.s_suff_q2[l]) % PMM.q2
+                self.sh_q1[l][r] = (self.s_suff_q1[r + 1] - pow(PMM.x, y, PMM.q1) * self.s_suff_q1[l]) % PMM.q1
+                self.sh_q2[l][r] = (self.s_suff_q2[r + 1] - pow(PMM.x, y, PMM.q2) * self.s_suff_q2[l]) % PMM.q2
 
-                self.ph_q1[p_l][p_r] = (self.p_suff_q1[p_r+1] - pow(PMM.x, y, PMM.q1) * self.p_suff_q1[p_l]) % PMM.q1
-                self.ph_q2[p_l][p_r] = (self.p_suff_q2[p_r+1] - pow(PMM.x, y, PMM.q2) * self.p_suff_q2[p_l]) % PMM.q2
+                self.ph_q1[p_l][p_r] = (self.p_suff_q1[p_r + 1] - pow(PMM.x, y, PMM.q1) * self.p_suff_q1[p_l]) % PMM.q1
+                self.ph_q2[p_l][p_r] = (self.p_suff_q2[p_r + 1] - pow(PMM.x, y, PMM.q2) * self.p_suff_q2[p_l]) % PMM.q2
 
         if self.sh_q1[l][r] == self.ph_q1[p_l][p_r] and self.sh_q2[l][r] == self.ph_q2[p_l][p_r]:
             return True
@@ -117,7 +125,7 @@ class PMM:
 
         # **** BASE CASE #2 ****:
         if l == r:
-            if self.s[l] == self.p[l-i]:
+            if self.s[l] == self.p[l - i]:
                 return 0
             else:
                 return 1
@@ -132,7 +140,7 @@ class PMM:
             return
 
         mid = l + (r - l) // 2
-        p_mid = mid-i if mid != 0 else mid
+        p_mid = mid - i if mid != 0 else mid
         if self.s[mid] != self.p[p_mid]:
             mismatches += 1
             # CURRENTLY COMMENTED OUT
@@ -188,6 +196,20 @@ class PMM:
             else:
                 print(len(self.result), *self.result)
 
+    # TODO !!!
+    def naive_handle_request(self):
+        indices = []
+        for win_start in range(len(self.s) - len(self.p) + 1):
+            count_mismatches = 0
+            for j in range(win_start, win_start + len(self.p)):
+                if self.s[j] != self.p[j - win_start]:
+                    count_mismatches += 1
+                    if count_mismatches > self.k:
+                        break
+            if count_mismatches <= self.k:
+                indices.append(win_start)
+        return [len(indices)] + indices
+
 
 def debug_solution(out_file):
     import os
@@ -202,8 +224,20 @@ def debug_solution(out_file):
 
 
 if __name__ == '__main__':
-    # debug_solution(out_file='./tests/02.out')
-    requests = get_requests()
-    for n, r in enumerate(requests):
+    while True:
+        k = n = random.randint(0, 2)
+        text_len = 12
+        patt_len = 4
+        s = rand_str(text_len)
+        p = rand_str(patt_len)
+        r = Request(k, s, p)
         pmm = PMM(r)
-        pmm.handle_request()
+        result = pmm.naive_handle_request()
+        print(*result)
+
+
+
+    # for text_len, r in enumerate(requests):
+    #     pmm = PMM(r)
+    #     pmm.handle_request()
+    # print(f'random string of length {n}: {rand_str(n)}')
