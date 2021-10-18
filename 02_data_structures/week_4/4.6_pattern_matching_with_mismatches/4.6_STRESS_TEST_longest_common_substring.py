@@ -1,6 +1,7 @@
 import random
 from copy import deepcopy
 from collections import namedtuple
+import string
 
 # k: maximum allowed number of mismatches;
 # s: string to search in;
@@ -10,10 +11,10 @@ Request = namedtuple('Request', ['k', 's', 'p'])
 
 def rand_str(str_len):
     # alphabet = string.ascii_lowercase
+    # return ''.join(random.choice(alphabet) for _ in range(str_len))
+
     alphabet = 'abc'
-    # return ''.join(random.choice(alphabet) for i in range(str_len))
-    mylist = ["a", "b", "c"]
-    return ''.join(random.choices(mylist, weights=[1, 1, 2], k=str_len))
+    return ''.join(random.choices(alphabet, weights=[1, 1, 2], k=str_len))
 
 
 def get_requests():
@@ -180,23 +181,23 @@ class PMM:
                         print(len(self.result), *self.result)
 
     def handle_request(self):
+        windows_num = len(self.s) - len(self.p) + 1
         # CORNER CASE:
         if self.k >= len(self.p):
-            print(len(self.s) - len(self.p) + 1, end=' ')
-            for num in range(len(self.s) - len(self.p) + 1):
-                print(num, end=' ')
-            print()
+            self.result.append(windows_num)
+            for pos in range(windows_num):
+                self.result.append(pos)
         else:
-            for i in range(len(self.s) - len(self.p) + 1):
+            for i in range(windows_num):
                 n_mismatches = self.count_mismatches(i, i, i + len(self.p) - 1)
                 if n_mismatches <= self.k:
                     self.result.append(i)
-            if not self.result:
-                print(0)
-            else:
-                print(len(self.result), *self.result)
 
-    # TODO !!!
+            if not self.result:
+                self.result.append(0)
+            else:
+                self.result = [len(self.result)] + self.result
+
     def naive_handle_request(self):
         indices = []
         for win_start in range(len(self.s) - len(self.p) + 1):
@@ -225,16 +226,32 @@ def debug_solution(out_file):
 
 if __name__ == '__main__':
     while True:
-        k = n = random.randint(0, 2)
-        text_len = 12
-        patt_len = 4
+        # k = random.randint(0, 5)
+        # text_len = random.randint(1, 20000)
+        # patt_len = random.randint(1, min(text_len, 1000))
+        k = 1
+        text_len = 5
+        patt_len = 2
         s = rand_str(text_len)
         p = rand_str(patt_len)
+
+        # ########## PREDEFINED Test Case ##########
+        # k = 2
+        # s = 'baccbbcbcccb'
+        # p = 'ccbb'
+        # ##########################################
         r = Request(k, s, p)
         pmm = PMM(r)
-        result = pmm.naive_handle_request()
-        print(*result)
-
+        naive_result = pmm.naive_handle_request()
+        pmm.handle_request()
+        hashing_result = pmm.result
+        if naive_result != hashing_result:
+            print(f'Wrong answer!:')
+            print(f'\tk = {pmm.k}; s = {pmm.s}; p = {pmm.p}')
+            print(f'\tnaive_result = {naive_result}; hashing_result = {hashing_result}')
+            break
+        else:
+            print('OK.')
 
 
     # for text_len, r in enumerate(requests):
