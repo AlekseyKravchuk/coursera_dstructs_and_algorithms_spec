@@ -18,8 +18,7 @@ class TreeOrders:
         self.lefts = [0 for i in range(self.n)]
         self.rights = [0 for i in range(self.n)]
         for i in range(self.n):
-            temp = map(int, sys.stdin.readline().split())
-            [a, b, c] = temp
+            a, b, c = map(int, sys.stdin.readline().split())
             self.keys[i] = a
             self.lefts[i] = b
             self.rights[i] = c
