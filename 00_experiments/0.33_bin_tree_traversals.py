@@ -14,37 +14,37 @@ class TreeOrders:
         self.res_postorder = []
 
         self.n = int(sys.stdin.readline())
-        self.keys = [0 for _ in range(self.n)]
-        self.lefts = [0 for _ in range(self.n)]
-        self.rights = [0 for _ in range(self.n)]
+        self.keys = [0 for i in range(self.n)]
+        self.lefts = [0 for i in range(self.n)]
+        self.rights = [0 for i in range(self.n)]
         for i in range(self.n):
-            self.keys[i], self.lefts[i], self.rights[i] = map(int, sys.stdin.readline().split())
+            a, b, c = map(int, sys.stdin.readline().split())
+            self.keys[i] = a
+            self.lefts[i] = b
+            self.rights[i] = c
 
     # in-order <=> СИММЕТРИЧНЫЙ порядок обхода
     # <left><root><right>
     # allows to visit nodes in order (in ascending order)
-    def in_order(self, i=0):
-        # BASE case: if a tree or subtree is empty, return
+    def inOrder(self, i=0):
+        # BASE case:
         if i == -1:
             return
 
-        # if root is not '-1'(NULL), we first need to visit LEFT subtree
-        self.in_order(self.lefts[i])
-        # then we should visit the ROOT node
+        self.inOrder(self.lefts[i])
         self.res_inorder.append(self.keys[i])
-        # now we can visit the RIGTH subtree
-        self.in_order(self.rights[i])
+        self.inOrder(self.rights[i])
 
     # pre-order <=> ПРЯМОЙ порядок обхода
     # <root><left><right>
-    def pre_order(self, i=0):
-        # BASE case: if a tree or subtree is empty, return
+    def preOrder(self, i=0):
+        # BASE case:
         if i == -1:
             return
 
         self.res_preorder.append(self.keys[i])
-        self.pre_order(self.lefts[i])
-        self.pre_order(self.rights[i])
+        self.preOrder(self.lefts[i])
+        self.preOrder(self.rights[i])
 
     # post-order <=> ОБРАТНЫЙ порядок обхода, от ДЕТЕЙ идем ОБРАТНО к родителю.
     # <left><right><root>
@@ -53,27 +53,29 @@ class TreeOrders:
         if i == -1:
             return
 
-        # if root is not '-1'(NULL), we first need to visit LEFT subtree
         self.postOrder(self.lefts[i])
-        # then we should visit RIGHT subtree
         self.postOrder(self.rights[i])
-        # now we can visit the ROOT node
         self.res_postorder.append(self.keys[i])
 
+
     def traverse_all_ways(self):
-        self.in_order()
+        self.inOrder()
         self.res_inorder = " ".join(str(x) for x in self.res_inorder)
 
-        self.pre_order()
+        self.preOrder()
         self.res_preorder = " ".join(str(x) for x in self.res_preorder)
 
         self.postOrder()
         self.res_postorder = " ".join(str(x) for x in self.res_postorder)
 
     def print_solution(self):
-        print(self.res_inorder)
-        print(self.res_preorder)
-        print(self.res_postorder)
+        s_inord = 'in-order (СИММЕТРИЧНЫЙ):'
+        s_preord = 'pre-order (ПРЯМОЙ):'
+        s_postord = 'post-order (ОБРАТНЫЙ):'
+        field_width = max(len(s_inord), len(s_preord), len(s_postord)) + 1
+        print(f'{s_inord: <{field_width}}{self.res_inorder}')
+        print(f'{s_preord: <{field_width}}{self.res_preorder}')
+        print(f'{s_postord: <{field_width}}{self.res_postorder}')
 
 
 def main():
