@@ -57,7 +57,6 @@ class TreeOrders:
         self.postOrder(self.rights[i])
         self.res_postorder.append(self.keys[i])
 
-
     def traverse_all_ways(self):
         self.inOrder()
         self.res_inorder = " ".join(str(x) for x in self.res_inorder)
