@@ -24,7 +24,7 @@ class TreeOrders:
             self.rights[i] = c
 
     # in-order <=> СИММЕТРИЧНЫЙ порядок обхода
-    # <left><root><right>
+    # <left><ROOT><right>
     # allows to visit nodes in order (in ascending order)
     def inOrder(self, i=0):
         # BASE case:
@@ -33,6 +33,7 @@ class TreeOrders:
 
         self.inOrder(self.lefts[i])
         self.res_inorder.append(self.keys[i])
+        # self.res_inorder.append( (self.keys[i], i) )
         self.inOrder(self.rights[i])
 
     # pre-order <=> ПРЯМОЙ порядок обхода
