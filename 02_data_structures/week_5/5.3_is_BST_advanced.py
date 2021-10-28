@@ -25,7 +25,9 @@ class BinaryTree:
             self.keys[i], self.lefts[i], self.rights[i] = map(int, sys.stdin.readline().split())
 
         self.sorted_BST_keys = sorted(self.keys)
+        self.root_key = self.keys[0]
 
+    # TODO
     # <left><root><right> <=> In-Order <=> СИММЕТРИЧНЫЙ порядок обхода
     def in_order(self, i=0):
         # BASE case: if a tree or subtree is empty, return
@@ -42,6 +44,9 @@ class BinaryTree:
                 if self.lefts[self.res[-1].node_index] == i:
                     self.BST_flag = False
                     return
+        elif self.root_key == self.keys[i]:
+            self.BST_flag = False
+            return
         # if a test succeeds, then visit ROOT node (add its key to resulting array)
         self.res.append(Node(self.keys[i], i))
 
@@ -60,7 +65,7 @@ class BinaryTree:
             self.state = 'CORRECT'
         else:
             self.in_order()
-            if self.BST_flag is True and self.is_almost_BST:
+            if self.BST_flag is True and self.is_almost_BST():
                 self.state = 'CORRECT'
             else:
                 self.state = 'INCORRECT'
