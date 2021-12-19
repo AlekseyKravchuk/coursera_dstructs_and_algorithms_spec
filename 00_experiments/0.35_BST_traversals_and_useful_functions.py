@@ -85,7 +85,7 @@ class BST:
 
         return stack[::-1]
 
-
+    # returns all leaves in BST using level order traversal algorithm
     def get_leaves(self):
         leaves = []
         if self.root is None:
@@ -105,6 +105,29 @@ class BST:
             current = q[0] if q else None
 
         return leaves
+
+    def leftRotate(self, grandparent):
+        tmp_ptr = grandparent.right
+        grandparent.right = tmp_ptr.left
+        tmp_ptr.left = grandparent
+        return tmp_ptr
+
+    def rightRotate(self, node):
+        tmp_ptr = node.left
+        node.left = tmp_ptr.right
+        tmp_ptr.right = node
+        return tmp_ptr
+
+    def rightLeftRotate(self, grandparent):
+        # first we need to rotate RIGHT the PARENT node
+        grandparent.right = self.rightRotate(grandparent.right)
+        # and then we need to rotate LEFT the GRANDPARENT node
+        return self.leftRotate(grandparent)
+
+    def leftRightRotate(self, grandparent):
+        grandparent.left = self.leftRotate(grandparent.left)
+        return self.rightRotate(grandparent)
+
 
     @staticmethod
     def height(node):
@@ -134,10 +157,12 @@ if __name__ == '__main__':
         tree.append_node(node_val)
 
     BST.traverse_in_order(tree.root)
+    BST.rightRotate(tree.root)
+    BST.traverse_in_order(tree.root)
     # print()
     # print('level-order traversal: ', end='')
     # tree.traverse_level_order()
     # print(f'\nleaves: {tree.get_leaves()}')
     # print(f'REVERSE level-order traversal: {tree.traverse_reverse_level_order()}')
     # print(f'height of BST = {BST.height(tree.root)}')
-    print(f'tree contains {tree.size_recur(tree.root)} nodes')
+    # print(f'tree contains {tree.size_recur(tree.root)} nodes')
