@@ -13,7 +13,7 @@ class SplayTree:
     def __init__(self):
         self.root = None
 
-    def appendNode(self, val):
+    def insertNode(self, val):
         current = self.root
 
         if self.root is None:
@@ -34,6 +34,25 @@ class SplayTree:
                         break
                 else:
                     break
+    
+    def search(self, val):
+        current = self.root
+        if self.root is None:
+            return None
+        else:
+            while True:
+                if val == current.key:
+                    return current
+                elif val < current.key:
+                    if current.left:
+                        current = current.left
+                    else:
+                        return None
+                else:  # val > current.key
+                    if current.right:
+                        current = current.right
+                    else:
+                        return None
 
     def print_traverse_level_order(self):
         if self.root is None:
@@ -51,6 +70,22 @@ class SplayTree:
             current = q[0] if q else None
         print()
 
+    def rotateRight(self, node):
+        tmp_ptr = node.left
+        node.left = tmp_ptr.right
+        tmp_ptr.right = node
+        self.root = tmp_ptr
+
+        return tmp_ptr
+
+    def rotateLeft(self, node):
+        tmp_ptr = node.right
+        node.right = tmp_ptr.left
+        tmp_ptr.left = node
+        self.root = tmp_ptr
+
+        return tmp_ptr
+
     def splay(self, node):
         if node is None:
             return None
@@ -59,25 +94,13 @@ class SplayTree:
             parent = node.parent
             grandparent = parent.parent
 
-            # ZIG (or ZAG) situation
-            # if grandparent is None, it means that the node has only one parent being the root node
+            # if grandparent is None, it means that the given node IS the LEFT child OR the RIGHT child of a root node
+            # it corresponds to ZIG (LEFT child of root) or ZAG (right child of root) situation
             if grandparent is None:
-                if parent.left is node:
-                    rotateRight(self, parent)
-                else:
-                    rotateLeft(self, parent)
-
-    def rotateRight(self, node):
-        tmp_ptr = node.left
-        node.left = tmp_ptr.right
-        tmp_ptr.right = node
-        self.root = tmp_ptr
-
-    def rotateLeft(self, node):
-        tmp_ptr = node.right
-        node.right = tmp_ptr.left
-        tmp_ptr.left = node
-        self.root = tmp_ptr
+                if parent.left is node:  # ZIG situation
+                    node = self.rotateRight(parent)
+                else:                    # ZAG situation
+                    node = self.rotateLeft(parent)
 
 
 if __name__ == '__main__':
@@ -88,9 +111,15 @@ Test input:
     """
     n = int(input())
     node_lst = list(map(int, input().split()))
-    splay_tree = SplayTree()
+    tree = SplayTree()
 
     for node in node_lst:
-        splay_tree.appendNode(node)
+        tree.insertNode(node)
 
-    splay_tree.print_traverse_level_order()
+    print('Befor splaying: ', end='')
+    tree.print_traverse_level_order()
+    tmp_node = tree.search(18)
+    # print(tmp_node.left, tmp_node.right)
+    tree.splay(tmp_node)
+    print('After splaying: ', end='')
+    tree.print_traverse_level_order()
