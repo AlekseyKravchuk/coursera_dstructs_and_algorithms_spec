@@ -11,14 +11,14 @@ class Vertex:
         (self.key, self.sum, self.left, self.right, self.parent) = (key, sum, left, right, parent)
 
 
-def update(v):
-    if v == None:
+def update(node):
+    if node == None:
         return
-    v.sum = v.key + (v.left.sum if v.left != None else 0) + (v.right.sum if v.right != None else 0)
-    if v.left != None:
-        v.left.parent = v
-    if v.right != None:
-        v.right.parent = v
+    node.sum = node.key + (node.left.sum if node.left != None else 0) + (node.right.sum if node.right != None else 0)
+    if node.left != None:
+        node.left.parent = node
+    if node.right != None:
+        node.right.parent = node
 
 
 def smallRotation(v):

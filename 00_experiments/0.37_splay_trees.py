@@ -74,33 +74,58 @@ class SplayTree:
         tmp_ptr = node.left
         node.left = tmp_ptr.right
         tmp_ptr.right = node
-        self.root = tmp_ptr
-
-        return tmp_ptr
 
     def rotateLeft(self, node):
         tmp_ptr = node.right
         node.right = tmp_ptr.left
         tmp_ptr.left = node
-        self.root = tmp_ptr
 
-        return tmp_ptr
+    # updates 'PARENT' attribute for LEFT and RIGHT child of node 'v'
+    @staticmethod
+    def update(v):
+        if v is None:
+            return
+        if v.left is not None:
+            v.left.parent = v
+        if v.right is not None:
+            v.right.parent = v
 
-    def splay(self, node):
-        if node is None:
+    def smallRotation(self, v):
+        if v.parent is None:
+            return
+        parent = v.parent
+        grandparent = v.parent.parent
+
+        if parent.left is v:  # node 'v' is LEFT child of a root node (ZIG situation)
+            self.rotateRight(parent)
+        else:  # node 'v' is RIGHT child of a root node (ZAG situation)
+            self.rotateLeft(parent)
+
+        # we haven't fixed PARENT attribute yet for some nodes
+        # for ZIG situation there are: parent, v and v.right
+        # for ZAG situation there are: parent, v and v.left
+        self.update(parent)     # fix parent.left.parent and parent.right.parent
+        self.update(v)          # fix v.left.parent and v.right.parent
+        v.parent = grandparent  # fix v.parent
+
+        if grandparent is not None:
+            if grandparent.left == parent:
+                grandparent.left = v
+            else:
+                grandparent.right = v
+
+    def splay(self, v):
+        if v == None:
             return None
+        while v.parent is not None:
+            # if grandparent is None, it means that the parent node of 'v' is the root node
+            # and given node, 'v', is the LEFT child OR the RIGHT child of a root node
+            if v.parent.parent is None:
+                self.smallRotation(v)
+                break
+            self.bigRotation(v)
 
-        while node.parent is not None:
-            parent = node.parent
-            grandparent = parent.parent
-
-            # if grandparent is None, it means that the given node IS the LEFT child OR the RIGHT child of a root node
-            # it corresponds to ZIG (LEFT child of root) or ZAG (right child of root) situation
-            if grandparent is None:
-                if parent.left is node:  # ZIG situation
-                    node = self.rotateRight(parent)
-                else:                    # ZAG situation
-                    node = self.rotateLeft(parent)
+        self.root = v
 
 
 if __name__ == '__main__':
