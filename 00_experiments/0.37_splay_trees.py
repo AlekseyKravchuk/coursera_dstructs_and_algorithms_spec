@@ -71,14 +71,14 @@ class SplayTree:
         print()
 
     def rotateRight(self, node):
-        tmp_ptr = node.left
-        node.left = tmp_ptr.right
-        tmp_ptr.right = node
+        tmp = node.left
+        node.left = tmp.right
+        tmp.right = node
 
     def rotateLeft(self, node):
-        tmp_ptr = node.right
-        node.right = tmp_ptr.left
-        tmp_ptr.left = node
+        tmp = node.right
+        node.right = tmp.left
+        tmp.left = node
 
     # updates 'PARENT' attribute for LEFT and RIGHT child of node 'v'
     @staticmethod
@@ -96,12 +96,13 @@ class SplayTree:
         parent = v.parent
         grandparent = v.parent.parent
 
-        if parent.left is v:  # node 'v' is LEFT child of a root node (ZIG situation)
+        if parent.left is v:
+            # Zig situation: node 'v' is LEFT child of its parent
             self.rotateRight(parent)
-        else:  # node 'v' is RIGHT child of a root node (ZAG situation)
+        else:  # Zag situation: node 'v' is RIGHT child of its parent
             self.rotateLeft(parent)
 
-        # we haven't fixed PARENT attribute yet for some nodes
+        # we haven't fixed PARENT attribute for some nodes yet
         # for ZIG situation there are: parent, v and v.right
         # for ZAG situation there are: parent, v and v.left
         self.update(parent)     # fix parent.left.parent and parent.right.parent
@@ -113,6 +114,20 @@ class SplayTree:
                 grandparent.left = v
             else:
                 grandparent.right = v
+
+    def bigRotation(self, v):
+        if v.parent.left == v and v.parent.parent.left == v.parent:
+            # Zig-zig
+            self.smallRotation(v.parent)
+            self.smallRotation(v)
+        elif v.parent.right is v and v.parent.parent.right is v.parent:
+            # Zag-zag
+            self.smallRotation(v.parent)
+            self.smallRotation(v)
+        else:
+            # Zig-zag
+            self.smallRotation(v)
+            self.smallRotation(v)
 
     def splay(self, v):
         if v == None:
