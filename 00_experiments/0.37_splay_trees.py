@@ -109,14 +109,15 @@ class SplayTree:
         self.update(v)          # fix v.left.parent and v.right.parent
         v.parent = grandparent  # fix v.parent
 
+        # there is one issue left: we should attach modified subtree to
         if grandparent is not None:
-            if grandparent.left == parent:
+            if grandparent.left is parent:
                 grandparent.left = v
             else:
                 grandparent.right = v
 
     def bigRotation(self, v):
-        if v.parent.left == v and v.parent.parent.left == v.parent:
+        if v.parent.left is v and v.parent.parent.left is v.parent:
             # Zig-zig
             self.smallRotation(v.parent)
             self.smallRotation(v)
@@ -130,7 +131,7 @@ class SplayTree:
             self.smallRotation(v)
 
     def splay(self, v):
-        if v == None:
+        if v is None:
             return None
         while v.parent is not None:
             # if grandparent is None, it means that the parent node of 'v' is the root node
@@ -145,9 +146,13 @@ class SplayTree:
 
 if __name__ == '__main__':
     """
-Test input:
+Test input #1:
 5
 20 18 15 19 17
+
+Test input #2:
+5
+15 12 18 14 13
     """
     n = int(input())
     node_lst = list(map(int, input().split()))
@@ -156,9 +161,10 @@ Test input:
     for node in node_lst:
         tree.insertNode(node)
 
-    print('Befor splaying: ', end='')
+    print('Before splaying: ', end='')
     tree.print_traverse_level_order()
-    tmp_node = tree.search(18)
+    # tmp_node = tree.search(18)
+    tmp_node = tree.search(13)
     # print(tmp_node.left, tmp_node.right)
     tree.splay(tmp_node)
     print('After splaying: ', end='')
