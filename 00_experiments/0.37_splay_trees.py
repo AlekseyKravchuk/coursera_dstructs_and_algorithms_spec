@@ -92,7 +92,7 @@ class SplayTree:
 
     def smallRotation(self, v):
         if v.parent is None:
-            return
+            return None
         parent = v.parent
         grandparent = v.parent.parent
 
@@ -109,7 +109,7 @@ class SplayTree:
         self.update(v)          # fix v.left.parent and v.right.parent
         v.parent = grandparent  # fix v.parent
 
-        # there is one issue left: we should attach modified subtree to
+        # there is one issue left: we should attach modified subtree to unmodified one
         if grandparent is not None:
             if grandparent.left is parent:
                 grandparent.left = v
@@ -134,11 +134,11 @@ class SplayTree:
         if v is None:
             return None
         while v.parent is not None:
-            # if grandparent is None, it means that the parent node of 'v' is the root node
-            # and given node, 'v', is the LEFT child OR the RIGHT child of a root node
+            # if the node 'v' is the direct child of root (LEFT or RIGHT child of root), we will just do 1 rotation
             if v.parent.parent is None:
                 self.smallRotation(v)
                 break
+            # otherwise
             self.bigRotation(v)
 
         self.root = v
