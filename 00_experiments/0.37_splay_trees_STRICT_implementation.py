@@ -43,43 +43,43 @@ class SplayTree:
             current = q[0] if q else None
         print()
 
-    def left_rotate(self, v):
-        if v is None:
+    def left_rotate(self, node):
+        if node is None:
             return None
-        tmp = v.right
-        v.right = tmp.left
-        if v.right is not None:
-            v.right.parent = v
-        tmp.left = v
+        tmp = node.right
+        node.right = tmp.left
+        if node.right is not None:
+            node.right.parent = node
+        tmp.left = node
 
-        tmp.parent = v.parent
-        if v.parent is not None:
-            if v.parent.left is v:
-                v.parent.left = tmp
+        tmp.parent = node.parent
+        if node.parent is not None:
+            if node.parent.left is node:
+                node.parent.left = tmp
             else:  # if v.parent.right is v
-                v.parent.right = tmp
+                node.parent.right = tmp
         else:
             self.root = tmp
-        v.parent = tmp
+        node.parent = tmp
 
-    def right_rotate(self, v):
-        if v is None:
+    def right_rotate(self, node):
+        if node is None:
             return None
-        tmp = v.left
-        v.left = tmp.right
-        if v.left is not None:
-            v.left.parent = v
-        tmp.right = v
-        tmp.parent = v.parent
+        tmp = node.left
+        node.left = tmp.right
+        if node.left is not None:
+            node.left.parent = node
+        tmp.right = node
+        tmp.parent = node.parent
 
-        if v.parent is not None:
-            if v.parent.left is v:
-                v.parent.left = tmp
+        if node.parent is not None:
+            if node.parent.left is node:
+                node.parent.left = tmp
             else:
-                v.parent.right = tmp
+                node.parent.right = tmp
         else:
             self.root = tmp
-        v.parent = tmp
+        node.parent = tmp
 
     def splay(self, v):
         if v is None:
@@ -91,7 +91,7 @@ class SplayTree:
                     self.right_rotate(v.parent)
                 else:  # if v.parent.right is v
                     self.left_rotate(v.parent)
-            else:
+            else:  # if 'v' IS NOT child of a root, so it is needed more than one simple rotation
                 parent = v.parent
                 grandparent = parent.parent
 
@@ -208,8 +208,10 @@ if __name__ == '__main__':
 
     # tmp = tree.search(9)   # for test case #1: /home/kav/splay_trees_input_1.txt
     # tmp = tree.search(24)  # for test case #2: /home/kav/splay_trees_input_2.txt
-    tmp = tree.search(17)    # for test case #3: /home/kav/splay_trees_input_3.txt
-
+    # tmp = tree.search(17)  # for test case #3: /home/kav/splay_trees_input_3.txt
+    # tmp = tree.search(7)   # for test case #4: /home/kav/splay_trees_input_4.txt
+    # tmp = tree.search(20)  # for test case #5: /home/kav/splay_trees_input_5.txt
+    tmp = tree.search(3)     # for test case #6: /home/kav/splay_trees_input_6.txt
     tree.splay(tmp)
 
     print(f'inorder traversal AFTER splaying:', end=' ')

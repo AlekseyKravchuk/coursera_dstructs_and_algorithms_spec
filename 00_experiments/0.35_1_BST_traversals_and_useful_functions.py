@@ -1,5 +1,6 @@
 from collections import deque
 
+
 class Node:
     def __init__(self, val):
         self.key = val
@@ -16,7 +17,8 @@ class BST:
         self.root = None
         self.height = None
 
-    def append_node(self, val):
+    # inserts node with given 'val' into given BST
+    def insert(self, val):
         if self.root is None:
             self.root = Node(val)
             self.root.level = 0
@@ -43,6 +45,82 @@ class BST:
                 else:
                     break
 
+    def search(self, val):
+        if self.root is None:
+            return
+        current = self.root
+        while current is not None:
+            if val == current.key:
+                return current
+            elif val < current.key:
+                if current.left is not None:
+                    current = current.left
+                else:
+                    return None
+            else:  # if val > current.key
+                if current.right is not None:
+                    current = current.right
+                else:
+                    return None
+
+    def delete(self, val):
+        if self.root is None:
+            return False
+
+        # if val in root node
+        elif val == self.root.key:
+            # TODO
+            pass
+
+        parent = None
+        node = self.root
+
+        # find node to remove
+        while node is not None and node.key != val:
+            parent = node
+            if val < node.key:
+                node = node.left
+            elif val > node.key:
+                node = node.right
+
+        # case 1: 'val' is not found
+        if node is None or node.key != val:
+            return False
+
+        # case 2: node to be deleted has no children
+        elif node.left is None and node.right is None:
+            if parent.left is node:
+                parent.left = None
+            else:  # if parent.right is node
+                parent.right = None
+            return True
+
+        # case 3: 'node' to be deleted has only LEFT child
+        # but the 'node' itself can be either RIGHT child or LEFT child of parent
+        elif node.left is not None and node.right is None:
+            if parent.left is node:  # node is LEFT child of it's parent
+                parent.left = node.left
+            else:  # node is RIGHT child of it's parent
+                parent.right = node.left
+            return True
+
+        # case 4: 'node' to be deleted has only RIGHT child
+        # but the 'node' itself can be either RIGHT child or LEFT child of parent
+        elif node.left is None and node.right is not None:
+            if parent.left is node:  # node is LEFT child of it's parent
+                parent.left = node.right
+            else:  # node is RIGHT child of it's parent
+                parent.right = node.right
+            return True
+
+        # case 5: 'node' to be deleted has both LEFT and RIGHT children
+        else:
+            parent = node
+            current = node.left
+            while current is not None:
+                parent = current
+                current = current.right
+
     def size_recur(self, node):
         if node is None:
             return 0
@@ -51,7 +129,16 @@ class BST:
         num_of_right_subtree = self.size_recur(node.right)
         return 1 + num_of_left_subtree + num_of_right_subtree
 
-    def traverse_level_order(self):
+    # <left><Root><right>, симметричный обход
+    def print_inorder(self, root):
+        if root is None:
+            return
+
+        self.print_inorder(root.left)
+        print(f'{root}({root.level})', end=' ')
+        self.print_inorder(root.right)
+
+    def print_level_order(self):
         if self.root is None:
             return
 
@@ -106,29 +193,6 @@ class BST:
 
         return leaves
 
-    def leftRotate(self, grandparent):
-        tmp_ptr = grandparent.right
-        grandparent.right = tmp_ptr.left
-        tmp_ptr.left = grandparent
-        return tmp_ptr
-
-    def rightRotate(self, node):
-        tmp_ptr = node.left
-        node.left = tmp_ptr.right
-        tmp_ptr.right = node
-        return tmp_ptr
-
-    def rightLeftRotate(self, grandparent):
-        # first we need to rotate RIGHT the PARENT node
-        grandparent.right = self.rightRotate(grandparent.right)
-        # and then we need to rotate LEFT the GRANDPARENT node
-        return self.leftRotate(grandparent)
-
-    def leftRightRotate(self, grandparent):
-        grandparent.left = self.leftRotate(grandparent.left)
-        return self.rightRotate(grandparent)
-
-
     @staticmethod
     def height(node):
         if node is None:
@@ -138,27 +202,34 @@ class BST:
 
         return 1 + max(left_subtree_height, right_subtree_height)
 
-    # <left><Root><right>, симметричный обход
-    @staticmethod
-    def traverse_in_order(root):
-        if root is None:
-            return
-
-        BST.traverse_in_order(root.left)
-        print(f'{root}({root.level})', end=' ')
-        BST.traverse_in_order(root.right)
-
 
 if __name__ == '__main__':
     tree = BST()
-    n = int(input())
-    node_vals_lst = list(map(int, input().split()))
-    for node_val in node_vals_lst:
-        tree.append_node(node_val)
+    # !!!!!!!! Code to take input from standard input !!!!!!!!
+    # n = int(input())
+    # node_vals_lst = list(map(int, input().split()))
+    # for node_val in node_vals_lst:
+    #     tree.append_node(node_val)
 
-    BST.traverse_in_order(tree.root)
-    BST.rightRotate(tree.root)
-    BST.traverse_in_order(tree.root)
+    node_vals = [11, 6, 8, 19, 4, 10, 5, 17, 43, 49, 31]
+    for val in node_vals:
+        tree.insert(val)
+
+    print('In-order traversal:')
+    tree.print_inorder(tree.root)
+    print()
+    print('Level-order traversal:')
+    tree.print_level_order()
+
+    # tmp = tree.search(4)
+    # print(f'\nResult of searching: {tmp}(level={tmp.level})')
+
+    key2delete = 5
+    tree.delete(key2delete)
+    print(f'\nLevel-order traversal after deletion {key2delete}:')
+    tree.print_level_order()
+
+
     # print()
     # print('level-order traversal: ', end='')
     # tree.traverse_level_order()
