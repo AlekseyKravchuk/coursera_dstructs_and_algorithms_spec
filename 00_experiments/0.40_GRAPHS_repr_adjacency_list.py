@@ -2,8 +2,8 @@
 # explanation https://www.youtube.com/watch?v=HDUzBEG1GlA
 class Vertex:
     def __init__(self, name):
-        self.name = name
-        self.neighbors = list()
+        self.name = name         # name of vertex
+        self.neighbors = list()  # adjacency list of neighbors
 
     def add_neighbor(self, v):
         if v not in self.neighbors:
@@ -46,9 +46,11 @@ class Graph:
 if __name__ == '__main__':
     g = Graph()
     # print(str(len(g.vertices)))
-    a = Vertex('A')
-    g.add_vertex(a)
-    g.add_vertex(Vertex('B'))
+    # a = Vertex('A')
+    # g.add_vertex(Vertex('A'))
+    # g.add_vertex(Vertex('B'))
+
+    vertices_lst = [x for x in range(ord('A'), ord(''))]
     for i in range(ord('A'), ord('K')):
         g.add_vertex(Vertex(chr(i)))
 
