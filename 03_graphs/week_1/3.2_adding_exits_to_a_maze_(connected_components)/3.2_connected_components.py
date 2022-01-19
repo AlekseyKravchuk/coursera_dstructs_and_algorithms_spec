@@ -4,7 +4,7 @@ from copy import deepcopy
 
 class Graph:
     def __init__(self, n):  # 'n' = |V|
-        self.vertices = set(range(1, n+1))
+        self.vertices = set(range(1, n+1))  # this class variable is needed to take into account isolated vertices
         self.G = defaultdict(set)  # self.G = {vertex_id: {set_of_adjacent_vertices}}
         self.visited = set()
 
@@ -27,6 +27,21 @@ class Graph:
         for neighbor in self.G[start]:
             if neighbor not in self.visited:
                 self.dfs(neighbor)
+
+    # modified dfs to answer the question:
+    # "Is the vertex 'end' reachable from the 'start' one in the given graph?"
+    # or, in other words: "Do vertices 'start' and 'end' belong to the same connected component"
+    def has_path(self, start, end):
+        # base case
+        if start == end:
+            return True
+
+        self.visited.add(start)
+        for neighbor in self.G[start]:
+            if neighbor not in self.visited:
+                if self.has_path(neighbor, end):
+                    return True
+        return False
 
     def get_num_of_connected_components(self):
         N = 0  # initialize the number of connected components
@@ -62,6 +77,10 @@ if __name__ == '__main__':
     # g.print_graph()
     # res = g.get_num_of_connected_components()
     # print(f'The number of connected components: {res}')
+
+    # ==== test for reachability problem ===
+    # res_path = g.has_path(11, 10)
+    # print(res_path)
 
     res = g.get_num_of_connected_components()
     print(res)
