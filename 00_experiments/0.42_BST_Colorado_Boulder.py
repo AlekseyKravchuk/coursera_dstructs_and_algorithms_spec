@@ -85,48 +85,6 @@ class Node:
             right_subtree_height = self.right.height() if self.right is not None else 0
             return 1 + max(left_subtree_height, right_subtree_height)
 
-    # TODO: Write an algorithm to delete a key in the tree.
-    # First, find the node in the tree with the key.
-    # Recommend drawing pictures to visualize these cases below before
-    # programming.
-    # Case 1: both children of the node are None
-    #   -- in this case, deletion is easy: simply find out if the node with key is its
-    #      parent's left/right child and set the corr. child to None in the parent node.
-    # Case 2: one of the child is None and the other is not.
-    #   -- replace the node with its only child. In other words,
-    #      modify the parent of the child to be the to be deleted node's parent.
-    #      also change the parent's left/right child appropriately.
-    # Case 3: both children of the parent are not None.
-    #    -- first find its successor (go one step right and all the way to the left).
-    #    -- function get_leftmost_descendant may be helpful here.
-    #    -- replace the key of the node by its successor.
-    #    -- delete the successor node.
-    # return: no return value specified
-
-    def delete(self, key):
-        (found, node_to_delete) = self.search(key)
-        assert (found is True), f"key to be deleted:{key} - does not exist in the tree"
-        if node_to_delete.parent is None:  # node_to_delete is root node
-
-
-
-        if node_to_delete.left is None and node_to_delete.right is None:
-            if node_to_delete.parent is not None:
-                if node_to_delete.parent.left is node_to_delete:
-                    node_to_delete.parent.left = None
-                else:
-                    node_to_delete.parent.right = None
-            else:  # node_to_delete.parent is None, so node_to_delete is root
-                self = None
-        elif (node_to_delete.left is None and node_to_delete.right is not None) \
-                or (node_to_delete.left is not None and node_to_delete.right is None):
-            pass
-
-
-
-
-
-
 
 if __name__ == '__main__':
     t1 = Node(25, None)
