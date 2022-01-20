@@ -66,11 +66,11 @@ class Node:
         else:
             # val2del == root.key, so we found node to be deleted. There are following possible cases:
             # 1) leaf node 2) has only LEFT child 3) has only RIGHT child 4) has both the LEFT and RIGHT children
-            if root.left is None:  # so root.right can be either None or not None
+            if root.left is None:  # so root.right can be either None or not None, so cases 1) and 3)
                 return root.right
-            elif root.right is None:  # root.left is not None and root.right is None
+            elif root.right is None:  # root.left is not None and root.right is None, so case 2)
                 return root.left
-            else:
+            else:  # case 4)
                 isuc = root.getInorderSuccessor()
                 root.key = isuc.key
                 root.right = root.delNode(root.right, isuc.key)
@@ -301,24 +301,18 @@ class BST:
 if __name__ == '__main__':
     tree = BST()
     # !!!!!!!! Code to take input from standard input !!!!!!!!
-    # n = int(input())
-    # node_vals_lst = list(map(int, input().split()))
-    # for node_val in node_vals_lst:
-    #     tree.append_node(node_val)
+    n = int(input())
+    values = list(map(int, input().split()))
+    val2delete = int(input())
 
-    node_vals = [11, 6, 8, 19, 17, 18, 10, 5, 43, 49, 31, 35]
-    # node_vals = [5, 3, 6, 2, 4, 7]
-    # node_vals = [11, 5, 15, 2, 7, 6, 10, 9, 8]
-    # node_vals = [11, 5]
-    for val in node_vals:
+    for val in values:
         tree.insert(val)
 
     tree.print_inorder()
     tree.print_level_order()
+    print(f'val2delete = {val2delete}')
 
     # print('Inorder list: {0}'.format(' '.join(tree.get_inorder_lst())))
-
-    val2delete = 11  # it is a leaf node
     # inorder_lst_before = tree.get_inorder_lst()
     # tree.delete_iterative(val2delete)
     tree.delete_recursive(val2delete)

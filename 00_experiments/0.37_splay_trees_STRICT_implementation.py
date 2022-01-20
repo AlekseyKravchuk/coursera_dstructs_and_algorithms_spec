@@ -1,5 +1,8 @@
 """
-https://www.codesdope.com/course/data-structures-splay-trees/
+1) https://www.codesdope.com/course/data-structures-splay-trees/ (great written explanation)
+2) Jenny's lectures CS/IT NET&JRF:
+    5.21 Splay Trees deletion | Bottom-up Splaying | Data structure: https://www.youtube.com/watch?v=ewRSYHStdSA&t=4s
+    5.22 Splay Tree Deletion | Top Down Splaying | Data Structure: https://www.youtube.com/watch?v=MumJoiP84J0&t=997s
 """
 
 from collections import deque
@@ -101,7 +104,7 @@ class SplayTree:
                     self.right_rotate(parent)
 
                 # ZAG-ZAG situation
-                elif parent.right is v and grandparent.right is parent:  # both are right children
+                elif parent.right is v and grandparent.right is parent:  # both 'v' and its parent are RIGHT children
                     self.left_rotate(grandparent)
                     self.left_rotate(parent)
 
@@ -194,8 +197,9 @@ class SplayTree:
 if __name__ == '__main__':
     v = int(input())
     node_lst = list(map(int, input().split()))
-    tree = SplayTree()
+    val2del = int(input())
 
+    tree = SplayTree()
     for node in node_lst:
         tree.insert(node)
 
@@ -206,12 +210,7 @@ if __name__ == '__main__':
     tree.print_level_order()
     print()
 
-    # tmp = tree.search(9)   # for test case #1: /home/kav/splay_trees_input_1.txt
-    # tmp = tree.search(24)  # for test case #2: /home/kav/splay_trees_input_2.txt
-    # tmp = tree.search(17)  # for test case #3: /home/kav/splay_trees_input_3.txt
-    # tmp = tree.search(7)   # for test case #4: /home/kav/splay_trees_input_4.txt
-    # tmp = tree.search(20)  # for test case #5: /home/kav/splay_trees_input_5.txt
-    tmp = tree.search(3)     # for test case #6: /home/kav/splay_trees_input_6.txt
+    tmp = tree.search(val2del)
     tree.splay(tmp)
 
     print(f'inorder traversal AFTER splaying:', end=' ')
