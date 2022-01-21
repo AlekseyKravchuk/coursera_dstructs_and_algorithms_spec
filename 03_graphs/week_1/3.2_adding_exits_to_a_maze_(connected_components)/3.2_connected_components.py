@@ -8,10 +8,10 @@ class Graph:
         self.G = defaultdict(set)  # self.G = {vertex_id: {set_of_adjacent_vertices}}
         self.visited = set()
 
-    # add edge with vertices 'v1' and 'v2'
-    def add_edge(self, v1, v2):
-        self.G[v1].add(v2)
-        self.G[v2].add(v1)
+    # add edge with vertices 'start' and 'end'
+    def add_edge(self, start, end):
+        self.G[start].add(end)
+        self.G[end].add(start)
 
     def add_isolated_vertex(self, v):
         self.G[v] = set()
