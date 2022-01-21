@@ -48,11 +48,9 @@ class Graph:
         search_within = set(deepcopy(self.G))
 
         while search_within:
-            # didn't come up with another (more elegant) way how select a vertex in the set randomly
-            v = search_within.pop()
-            search_within.add(v)
+            current = next(iter(search_within))
 
-            self.dfs(v)
+            self.dfs(current)
             search_within = self.vertices.difference(self.visited)
             N += 1
         return N
@@ -74,16 +72,7 @@ if __name__ == '__main__':
     for v in isolated_vertices:
         g.add_isolated_vertex(v)
 
-    # g.print_graph()
-    # res = g.get_num_of_connected_components()
-    # print(f'The number of connected components: {res}')
-
-    # ==== test for reachability problem ===
-    # res_path = g.has_path(11, 10)
-    # print(res_path)
-
-    res = g.get_num_of_connected_components()
-    print(res)
+    print(g.get_num_of_connected_components())
 
 
 
