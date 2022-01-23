@@ -6,9 +6,9 @@ class Graph:
     def __init__(self, n: int):
         self.vertices = defaultdict(set, {k: set() for k in range(1, n + 1)})
 
-        self.non_visited = deepcopy(set(self.vertices.keys()))  # WHITE set, vertices that not visited at all
-        self.visited = set()    # GREY set, vertices that currently in recursion stack
-        self.processed = set()  # BLACK set, vertices whose all the neighbors are processed, so it is processed itself
+        self.non_visited = deepcopy(set(self.vertices.keys()))  # WHITE set, vertices that aren't visited at all
+        self.visited = set()    # GREY set, vertices that are in recursion stack currently
+        self.processed = set()  # BLACK set, vertices that already visited and whose all neighbors are visited too
 
     def add_edge(self, start: int, end: int):
         self.vertices[start].add(end)
