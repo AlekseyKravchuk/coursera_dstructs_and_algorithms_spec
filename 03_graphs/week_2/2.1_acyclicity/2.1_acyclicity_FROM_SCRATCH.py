@@ -6,12 +6,12 @@ class Graph:
     def __init__(self, n):
         self.vertices = defaultdict(set, {key: set() for key in range(1, n + 1)})
 
-        self.not_visited = deepcopy(set(self.vertices.keys()))
+        self.not_visited = set(self.vertices.keys())
         self.visited = set()
         self.processed = set()
 
-    def add_edge(self, start, end):
-        self.vertices[start].add(end)
+    def add_edge(self, src, dest):
+        self.vertices[src].add(dest)
 
     def print_graph(self):
         for vertex, neighbors in self.vertices.items():
@@ -25,10 +25,11 @@ class Graph:
         self.visited.remove(current)
         self.processed.add(current)
 
+    # modified dfs to check acyclicity in graph
     def dfs_m(self, current):
-        if current in self.visited:
-            return 1  # that is given graph has a cycle
-        if current in self.processed:
+        if current in self.visited:  # that is given graph has a cycle
+            return 1
+        if current in self.processed:  # that is current vertex has been processed previously
             return 0
 
         self.mark_as_visited(current)
