@@ -17,7 +17,7 @@ def process_queries(queries):
     responses = []
     for q in queries:
         if q.type == 'add':
-            phone_book[q.phone_number] = q.name
+            phone_book[q.phone_number] = q.id
         elif q.type == 'del':
             if phone_book[q.phone_number] is not None:
                 phone_book[q.phone_number] = None

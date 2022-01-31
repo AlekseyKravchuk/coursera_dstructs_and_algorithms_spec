@@ -29,7 +29,7 @@ class Graph:
 
             for neighbor in self.G[current]:
                 self.in_deg_v[neighbor] -= 1
-                if not self.in_deg_v[neighbor]:  # if incoming degree of given neighbor becomes 0
+                if self.in_deg_v[neighbor] == 0:  # if incoming degree of given neighbor becomes 0
                     with_zero_incoming_degree.add(neighbor)
         return topology
 

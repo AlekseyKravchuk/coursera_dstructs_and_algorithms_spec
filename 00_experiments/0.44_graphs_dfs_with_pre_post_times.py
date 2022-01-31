@@ -1,10 +1,10 @@
 class Vertex:
     def __init__(self, n):
         self.name = n
-        self.neighbors = set()
+        self.neighbors = list()
 
-        self.is_visited = 0
-        self.is_processed = 0
+        self.discovery = 0
+        self.finish = 0
         self.color = 'black'
 
     def add_neighbor(self, v):
@@ -37,19 +37,19 @@ class Graph:
 
     def print_graph(self):
         for key in sorted(list(self.vertices.keys())):
-            print(key + str(self.vertices[key].neighbors) + "  " + str(self.vertices[key].is_visited) + "/" + str(
-                self.vertices[key].is_processed))
+            print(key + str(self.vertices[key].neighbors) + "  " + str(self.vertices[key].pre_time) + "/" + str(
+                self.vertices[key].post_time))
 
     def _dfs(self, vertex):
         global time
-        vertex.color = 'red'
-        vertex.is_visited = time
+        vertex.discovery_state = 'red'
+        vertex.pre_time = time
         time += 1
         for v in vertex.neighbors:
-            if self.vertices[v].color == 'black':
+            if self.vertices[v].discovery_state == 'black':
                 self._dfs(self.vertices[v])
-        vertex.color = 'blue'
-        vertex.is_processed = time
+        vertex.discovery_state = 'blue'
+        vertex.post_time = time
         time += 1
 
     def dfs(self, vertex):

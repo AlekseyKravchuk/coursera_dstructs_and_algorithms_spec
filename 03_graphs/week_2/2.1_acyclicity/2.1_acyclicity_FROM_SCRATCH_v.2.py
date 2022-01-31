@@ -1,10 +1,9 @@
 from collections import defaultdict
-from copy import deepcopy
 
 
-class Graph:
+class DirectedGraph:
     def __init__(self, n):
-        self.G = defaultdict(set, {key: set() for key in range(1, n + 1)})
+        self.G = defaultdict(set, {key: set() for key in range(1, n+1)})
 
         self.not_visited = set(self.G.keys())
         self.visited = set()
@@ -40,7 +39,7 @@ class Graph:
 
 if __name__ == '__main__':
     n, m = map(int, input().split())
-    G = Graph(n)
+    G = DirectedGraph(n)
 
     for _ in range(m):
         G.add_edge(*map(int, input().split()))
