@@ -42,13 +42,13 @@ class Graph:
 
     def _dfs(self, vertex):
         global time
-        vertex.discovery_state = 'red'
+        vertex.state = 'red'
         vertex.pre_time = time
         time += 1
         for v in vertex.neighbors:
-            if self.vertices[v].discovery_state == 'black':
+            if self.vertices[v].state == 'black':
                 self._dfs(self.vertices[v])
-        vertex.discovery_state = 'blue'
+        vertex.state = 'blue'
         vertex.post_time = time
         time += 1
 

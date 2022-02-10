@@ -1,5 +1,4 @@
 from enum import Enum
-from random import randint
 
 
 class State(Enum):
@@ -9,12 +8,8 @@ class State(Enum):
 
 
 class Vertex:
-    def __init__(self, vertex_name):
-        if isinstance(vertex_name, str):
-            self.id = str(vertex_name)
-        elif isinstance(vertex_name, int):
-            self.id = vertex_name
-
+    def __init__(self, vertex_id):
+        self.id = vertex_id
         self.neighbors = set()
 
         self.pre = 0   # time when the vertex began to be processed
@@ -49,7 +44,7 @@ class UndirectedGraph:
         UndirectedGraph.time += 1
 
         for neighbor in vertex.neighbors:
-            if self.G[neighbor].discovery_state == State.UNVISITED:
+            if self.G[neighbor].state == State.UNVISITED:
                 self.dfs(self.G[neighbor])
 
         vertex.discovery_state = State.PROCESSED
@@ -62,13 +57,12 @@ class DirectedGraph(UndirectedGraph):
     def __init__(self, n):
         UndirectedGraph.__init__(self, n)
         self.left2visit = set(self.G.keys())
+        self.is_DAG = None
 
     def add_edge(self, src, dst):
         self.G[src].add_neighbor(dst)
 
     def _dfs(self, vertex: Vertex):
-        # TODO
-        # fix it: wrong times when calling _dfs()...
         vertex.discovery_state = State.VISITED
         if vertex.id in self.left2visit:
             self.left2visit.remove(vertex.id)
@@ -77,32 +71,32 @@ class DirectedGraph(UndirectedGraph):
         UndirectedGraph.time += 1
 
         for neighbor in vertex.neighbors:
-            if self.G[neighbor].discovery_state == State.UNVISITED:
+            if self.G[neighbor].state == State.UNVISITED:
                 self._dfs(self.G[neighbor])
+            elif self.G[neighbor].state == State.VISITED:
+                self.is_DAG = False
 
         vertex.discovery_state = State.PROCESSED
         vertex.post = UndirectedGraph.time
         print(vertex, end=' ')
         UndirectedGraph.time += 1
 
-    def dfs(self, vertex: Vertex):
+    def dfs(self):
         while self.left2visit:
             next_vertex_id = next(iter(self.left2visit))
-            print(f'DFS was started from vertex: {self.G[next_vertex_id]}')
+            print(f'\nDFS was started from vertex: {self.G[next_vertex_id]}')
             self._dfs(self.G[next_vertex_id])
+        if self.is_DAG is None:
+            self.is_DAG = True
+        print(f"\nThe given directed graph {'is ACYCLIC' if self.is_DAG else 'has at least 1 cycle'}")
 
 
 if __name__ == '__main__':
     n, m = map(int, input().split())
-
-    # graph = UndirectedGraph(n)
     dir_graph = DirectedGraph(n)
+
     for _ in range(m):
         dir_graph.add_edge(*map(int, input().split()))
 
-    # dir_graph.print_graph()
-
-    vertex2start = dir_graph.G[randint(1, n)]
-    print(f'DFS was started from vertex: {vertex2start}')
-    dir_graph.dfs(vertex2start)
+    dir_graph.dfs()
 
