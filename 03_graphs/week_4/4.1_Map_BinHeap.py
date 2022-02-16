@@ -4,7 +4,14 @@ from collections import namedtuple
 Info = namedtuple('Info', ['vertex_id', 'dist'])
 
 
-class MapBinHeap:
+class MapMinHeap:
+    """
+    Implementation of Map + MinHeap data structure needed to implement Dijkstra's algorithm with priority queue
+    Supports following main operations:
+        => extractMin:        O(log_n)
+        => contains:          O(1)
+        => decrease_priority: O(log_n), where priority is meant as minimum distance from source vertex in Graph
+    """
     def __init__(self, n):
         self.heap = [Info(vertex_id, inf) for vertex_id in range(1, n + 1)]
         self.heap_last_idx = n-1
@@ -84,5 +91,5 @@ class MapBinHeap:
 
 if __name__ == '__main__':
     n = 5
-    mb = MapBinHeap(n)
+    mb = MapMinHeap(n)
     pass
