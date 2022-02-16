@@ -15,7 +15,7 @@ class UndirectedGraph:
 
     def print_graph(self):
         for key, vertex in self.G.items():
-            print(f'{key}: {vertex.neighbors}')
+            print(f'{key}: {vertex.G}')
 
     def bfs(self, src_id: int):  # src_id: id of source vertex passed to bfs, that is the vertex start traversal from
         self.dist[src_id] = 0

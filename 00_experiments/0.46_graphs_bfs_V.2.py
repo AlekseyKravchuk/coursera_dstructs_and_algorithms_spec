@@ -29,7 +29,7 @@ class UndirectedGraph:
 
     def print_graph(self):
         for key, vertex in self.G.items():
-            print(f'{key}: {vertex.neighbors}')
+            print(f'{key}: {vertex.G}')
 
     def bfs(self, src_id: int):  # src_id: id of source vertex passed to bfs, that is the vertex start traversal from
         self.G[src_id].dist = 0
@@ -41,7 +41,7 @@ class UndirectedGraph:
             # bfs_traversal_result.append(self.G[vertex_id])
             print(self.G[vertex_id])
 
-            for neighbor_id in self.G[vertex_id].neighbors:
+            for neighbor_id in self.G[vertex_id].G:
                 if isinf(self.G[neighbor_id].dist):
                     self.G[neighbor_id].dist = self.G[vertex_id].dist + 1
                     self.G[neighbor_id].predecessor_id = vertex_id

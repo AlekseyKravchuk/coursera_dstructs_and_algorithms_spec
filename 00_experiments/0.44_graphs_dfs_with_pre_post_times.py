@@ -37,7 +37,7 @@ class Graph:
 
     def print_graph(self):
         for key in sorted(list(self.vertices.keys())):
-            print(key + str(self.vertices[key].neighbors) + "  " + str(self.vertices[key].pre_time) + "/" + str(
+            print(key + str(self.vertices[key].G) + "  " + str(self.vertices[key].pre_time) + "/" + str(
                 self.vertices[key].post_time))
 
     def _dfs(self, vertex):
@@ -45,7 +45,7 @@ class Graph:
         vertex.state = 'red'
         vertex.pre_time = time
         time += 1
-        for v in vertex.neighbors:
+        for v in vertex.G:
             if self.vertices[v].state == 'black':
                 self._dfs(self.vertices[v])
         vertex.state = 'blue'

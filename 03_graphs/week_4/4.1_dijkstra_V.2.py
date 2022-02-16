@@ -49,7 +49,7 @@ class DirectedWeightedGraph:
 
     def print_graph(self):
         for key, vertex in self.neighbors.items():
-            print(f'{key}: {vertex.neighbors}')
+            print(f'{key}: {vertex.G}')
 
     def dijkstra(self, src_id):
         self.pq.decreasePriority(src_id, 0)

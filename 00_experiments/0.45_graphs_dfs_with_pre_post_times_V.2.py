@@ -36,7 +36,7 @@ class UndirectedGraph:
 
     def print_graph(self):
         for key, vertex in self.G.items():
-            print(f'{key}: {vertex.neighbors}')
+            print(f'{key}: {vertex.G}')
 
     def dfs(self, vertex: Vertex):
         vertex.discovery_state = State.VISITED

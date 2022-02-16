@@ -40,7 +40,7 @@ class Graph:
 
     def print_graph(self):
         for key in sorted(list(self.vertices.keys())):
-            print(key + str(self.vertices[key].neighbors))
+            print(key + str(self.vertices[key].G))
 
 
 if __name__ == '__main__':

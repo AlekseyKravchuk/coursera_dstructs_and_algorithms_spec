@@ -33,7 +33,7 @@ class DirectedWeightedGraph:
 
     def print_graph(self):
         for key, vertex in self.G.items():
-            print(f'{key}: {vertex.neighbors}')
+            print(f'{key}: {vertex.G}')
 
     def dijkstra(self, src_id: int):  # src_id: id of source vertex, that is the vertex we start traversal from
         self.G[src_id].dist = 0
@@ -42,7 +42,7 @@ class DirectedWeightedGraph:
         while q:
             vertex_id = q.popleft()
 
-            for neighbor in self.G[vertex_id].neighbors:
+            for neighbor in self.G[vertex_id].G:
                 if self.G[vertex_id].dist + neighbor.weight < self.G[neighbor.id].dist:
                     q.append(neighbor.id)
                     self.G[neighbor.id].dist = self.G[vertex_id].dist + neighbor.weight
