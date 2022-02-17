@@ -137,7 +137,21 @@ class DWGraph:
         # return -1 if self.pq[self.map[dst]].dist == inf else self.pq[self.map[dst]].dist
         return -1 if isinf(self.pq[self.map[dst]].dist) else int(self.pq[self.map[dst]].dist)
 
-def stanford_case():
+    def get_shortest_path_dijkstra_lst(self, src, dst_lst):
+        self.decreasePriority(src, 0)
+
+        while self.pq_is_not_empty():
+            vertex_id = self.extract_vertex_with_min_dist()
+            for nbr_id, weight in self.G[vertex_id].items():
+                if self.pq_contains(nbr_id):
+                    new_dist = self.pq[self.map[vertex_id]].dist + self.G[vertex_id][nbr_id]
+                    if new_dist < self.pq[self.map[nbr_id]].dist:
+                        self.decreasePriority(nbr_id, new_dist)
+
+        return [-1 if isinf(self.pq[self.map[dst]].dist) else int(self.pq[self.map[dst]].dist) for dst in dst_lst]
+
+
+if __name__ == '__main__':
     # TODO: построить граф на основе данного файла, выполнить задание Graph Search, Shortest Paths, and Data Structures
     # https://www.coursera.org/learn/algorithms-graphs-data-structures/exam/Ij5au/programming-assignment-2/attempt
     src_file_name = '/home/kav/PycharmProjects/coursera_dstructs_and_algorithms_spec/03_graphs/week_4/4.1_tests/dijkstraDataStanford.txt'
@@ -145,19 +159,21 @@ def stanford_case():
         lines = f.readlines()
         n = len(lines)
         dwg = DWGraph(n)
-        for i, line in enumerate(lines, start=1):
-            for nbr, weight in line.split():
-                pass
+        for line in lines:  # lines - это список строк
+            vertex_str, *splitted = line.strip().split('\t')
+            vertex_id = int(vertex_str)
+            splitted_lst = [*map(lambda s: s.split(','), splitted)]
+            dwg.G[vertex_id] = {int(neighbor_id): int(weight) for neighbor_id, weight in splitted_lst}
+        src = 1
+        dst_lst = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
+        lst = dwg.get_shortest_path_dijkstra_lst(src, dst_lst)
+        for elm in lst:
+            print(elm, end=',')
 
-
-
-
-
-if __name__ == '__main__':
-    n, m = map(int, input().split())
-    dwg = DWGraph(n)
-    for _ in range(m):
-        dwg.add_weighted_edge(*map(int, input().split()))
-    src, dst = map(int, input().split())
-
-    print(dwg.get_shortest_path_dijkstra(src, dst))
+    # n, m = map(int, input().split())
+    # dwg = DWGraph(n)
+    # for _ in range(m):
+    #     dwg.add_weighted_edge(*map(int, input().split()))
+    # src, dst = map(int, input().split())
+    #
+    # print(dwg.get_shortest_path_dijkstra(src, dst))
