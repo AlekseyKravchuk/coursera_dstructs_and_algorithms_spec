@@ -4,8 +4,6 @@ https://github.com/SSQ/Coursera-Stanford-Graph-Search-Shortest-Paths-and-Data-St
 
 src_file_name = '/home/kav/PycharmProjects/coursera_dstructs_and_algorithms_spec/03_graphs/week_4/4.1_tests/dijkstraDataStanford.txt'
 with open(src_file_name) as f:
-    # dijkstraData
-    # a = [[int(x) for x in ln.split()] for ln in f]
     data = []
     list_data = []
     node_list = []
@@ -15,15 +13,10 @@ with open(src_file_name) as f:
     data_v = []
     dict_nested = {}
     list_nested = []
-    for ln in f:
-        # print ln
-        # print type(ln)
-        # print len(ln)
-        if len(ln) > 1:
-            data = ln.split()
-            # print data
+    for line in f:
+        if len(line) > 1:
+            data = line.split()
             list_data.append(data)
-            # print list_data
 
     for i in range(len(list_data)):
         node_list.append(i + 1)
@@ -35,15 +28,9 @@ with open(src_file_name) as f:
             # print type(u)
             data_u.append(int(u))
             data_v.append(int(v))
-        # print data_u,data_v
         list_nested.append(dict(zip(data_u, data_v)))
-        # print list_nested
         data_u, data_v = [], []
-    # print node_list
-    # print list_nested
     dict_nested = dict(zip(node_list, list_nested))
-    # print dict_nested
-
 f.close()
 
 

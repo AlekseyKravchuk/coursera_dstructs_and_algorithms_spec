@@ -157,13 +157,12 @@ if __name__ == '__main__':
     src_file_name = '/home/kav/PycharmProjects/coursera_dstructs_and_algorithms_spec/03_graphs/week_4/4.1_tests/dijkstraDataStanford.txt'
     with open(src_file_name, 'r') as f:
         lines = f.readlines()
-        n = len(lines)
-        dwg = DWGraph(n)
+        dwg = DWGraph(len(lines))
         for line in lines:  # lines - это список строк
-            vertex_str, *splitted = line.strip().split('\t')
-            vertex_id = int(vertex_str)
-            splitted_lst = [*map(lambda s: s.split(','), splitted)]
-            dwg.G[vertex_id] = {int(neighbor_id): int(weight) for neighbor_id, weight in splitted_lst}
+            lst = line.split()
+            vertex_id, lst_of_str = int(lst[0]), lst[1:]
+            neighbors_as_dict = dict([[*map(int, s.split(','))] for s in lst_of_str])
+            dwg.G[vertex_id] = neighbors_as_dict
         src = 1
         dst_lst = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
         lst = dwg.get_shortest_path_dijkstra_lst(src, dst_lst)
