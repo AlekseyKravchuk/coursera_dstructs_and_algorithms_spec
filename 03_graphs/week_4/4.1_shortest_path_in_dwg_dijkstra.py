@@ -121,8 +121,8 @@ class DWGraph:
         else:
             return -1  # self.heap[i] corresponds to a leaf node
 
-    def pq_contains(self, vertex_id):
-        return vertex_id in self.map
+    def pq_contains(self, v_id):
+        return v_id in self.map
 
     def get_shortest_path_dijkstra(self, src, dst):
         self.decreasePriority(src, 0)
@@ -164,7 +164,8 @@ if __name__ == '__main__':
             neighbors_as_dict = dict([[*map(int, s.split(','))] for s in lst_of_str])
             dwg.G[vertex_id] = neighbors_as_dict
         src = 1
-        dst_lst = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
+        # dst_lst = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
+        dst_lst = [188]
         lst = dwg.get_shortest_path_dijkstra_lst(src, dst_lst)
         for elm in lst:
             print(elm, end=',')

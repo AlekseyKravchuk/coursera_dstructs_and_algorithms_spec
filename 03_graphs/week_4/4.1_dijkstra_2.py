@@ -6,32 +6,38 @@ https://github.com/SSQ/Coursera-Stanford-Graph-Search-Shortest-Paths-and-Data-St
 
 
 def dijkstra():
-    dist = []
-    V = [*graph.keys()]
-    X = [1]  # vertices processed so far; all of the nodes we've already processed
-    visited = {1: 0}  # computed shortest path distance
+    scores = []
+    V = [*graph.keys()]  # all the vertices in graph
+    X = [1]  # vertices processed so far; all of the nodes we've already processed (correctly computed shortest path)
+    A = {1: 0}  # computed shortest path distances for all vertices from the source vertex with id = 1
+    B = [[None] for _ in range(len(V)+1)]
     data_v = []
     neighbors_lst = []
 
     while X != V:
-        for v in X:
-            for nbr_id in graph[v].keys():
-                if nbr_id not in visited:
-                    data_v.append(v)
+        for vert_id in X:
+            for nbr_id in graph[vert_id].keys():  # iterate over all neighbors of vertex with 'vert_id' id
+                if nbr_id not in A:
+                    data_v.append(vert_id)
                     neighbors_lst.append(nbr_id)
-                    dist.append(visited[v] + graph[v][nbr_id])
-        idx_of_nbr_with_min_dist = dist.index(min(dist))
+                    scores.append(A[vert_id] + graph[vert_id][nbr_id])
+        idx_of_nbr_with_min_dist = scores.index(min(scores))
         nbr_with_min_dist = neighbors_lst[idx_of_nbr_with_min_dist]
         X.append(nbr_with_min_dist)
-        visited[nbr_with_min_dist] = min(dist)
+        B[nbr_with_min_dist] = B[vert_id] + [nbr_with_min_dist]
+        A[nbr_with_min_dist] = min(scores)
         X.sort()
-        dist = []
+        scores = []
         data_v = []
         neighbors_lst = []
-    tmp = []
-    for keys in [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]:
-        tmp.append(visited[keys])
-    print(tmp)
+
+    # tmp = []
+    # tmp_pred = []
+    for vertex_id in [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]:
+        print(f'dist({vertex_id}) = {A[vertex_id]}, path = {B[vertex_id]}')
+        # tmp.append(A[vertex_id])
+        # tmp_pred.append(B[vertex_id])
+    # print(tmp)
 
 
 if __name__ == '__main__':
