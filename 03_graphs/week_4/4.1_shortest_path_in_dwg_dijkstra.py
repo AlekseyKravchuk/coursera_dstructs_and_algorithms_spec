@@ -1,4 +1,5 @@
 # from sys import maxsize as inf
+import logging
 from collections import namedtuple
 from math import inf
 from math import isinf
@@ -102,11 +103,13 @@ class DWGraph:
 
     def extract_vertex_with_min_dist(self):
         if self.last_idx > 0:
+            self.map.pop(self.pq[0].vertex_id)
             self.swap(0, self.last_idx)
             self.last_idx -= 1
             self.sift_down(0)
             return self.pq[self.last_idx + 1].vertex_id
         elif self.last_idx == 0:
+            self.map.pop(self.pq[0].vertex_id)
             self.last_idx -= 1
             return self.pq[0].vertex_id
         else:
@@ -122,6 +125,8 @@ class DWGraph:
             return -1  # self.heap[i] corresponds to a leaf node
 
     def pq_contains(self, v_id):
+        # index_in_heap = self.map[v_id]
+        # return True if index_in_heap >= self.last_idx else False
         return v_id in self.map
 
     def get_shortest_path_dijkstra(self, src, dst):
@@ -137,18 +142,27 @@ class DWGraph:
         # return -1 if self.pq[self.map[dst]].dist == inf else self.pq[self.map[dst]].dist
         return -1 if isinf(self.pq[self.map[dst]].dist) else int(self.pq[self.map[dst]].dist)
 
-    def get_shortest_path_dijkstra_lst(self, src, dst_lst):
+    def get_shortest_path_dijkstra_lst(self, src, dst):
         self.decreasePriority(src, 0)
 
         while self.pq_is_not_empty():
             vertex_id = self.extract_vertex_with_min_dist()
             for nbr_id, weight in self.G[vertex_id].items():
-                if self.pq_contains(nbr_id):
-                    new_dist = self.pq[self.map[vertex_id]].dist + self.G[vertex_id][nbr_id]
+                if self.pq_contains(nbr_id) and self.last_idx >= 0:
+                    new_dist = self.pq[self.map[vertex_id]].dist + self.pq[self.map[vertex_id]].dist
                     if new_dist < self.pq[self.map[nbr_id]].dist:
                         self.decreasePriority(nbr_id, new_dist)
 
-        return [-1 if isinf(self.pq[self.map[dst]].dist) else int(self.pq[self.map[dst]].dist) for dst in dst_lst]
+        min_dst = -1 if isinf(self.pq[self.map[dst]].dist) else int(self.pq[self.map[dst]].dist)
+        # dist_res = [-1 if isinf(self.pq[self.map[dst]].dist) else int(self.pq[self.map[dst]].dist) for dst in dst]
+
+        # for debugging:
+        # D = {str(e.vertex_id): str(e.dist) for e in self.pq}
+        # logger = logging.getLogger()
+        # logger.propogate = True
+        # logger.error(f"{D}")
+
+        return min_dst
 
 
 if __name__ == '__main__':
@@ -165,10 +179,12 @@ if __name__ == '__main__':
             dwg.G[vertex_id] = neighbors_as_dict
         src = 1
         # dst_lst = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
-        dst_lst = [188]
-        lst = dwg.get_shortest_path_dijkstra_lst(src, dst_lst)
-        for elm in lst:
-            print(elm, end=',')
+        dst = 188
+        min_dist = dwg.get_shortest_path_dijkstra_lst(src, dst)
+        print(min_dist)
+        # lst = dwg.get_shortest_path_dijkstra_lst(src, dst)
+        # for elm in lst:
+        #     print(elm, end=',')
 
     # n, m = map(int, input().split())
     # dwg = DWGraph(n)
