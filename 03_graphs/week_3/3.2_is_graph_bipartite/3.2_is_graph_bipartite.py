@@ -45,7 +45,7 @@ class UndirectedGraph:
         if src_id in self.left2visit:
             self.left2visit.remove(src_id)
 
-        self.G[src_id].dist = 0
+        self.G[src_id].get_dist = 0
         self.G[src_id].color = Color.RED
         q = deque([src_id])
 
@@ -53,11 +53,11 @@ class UndirectedGraph:
             vertex_id = q.popleft()
 
             for neighbor_id in self.G[vertex_id].G:
-                if isinf(self.G[neighbor_id].dist):
+                if isinf(self.G[neighbor_id].get_dist):
                     if neighbor_id in self.left2visit:
                         self.left2visit.remove(neighbor_id)
 
-                    self.G[neighbor_id].dist = self.G[vertex_id].dist + 1
+                    self.G[neighbor_id].get_dist = self.G[vertex_id].get_dist + 1
                     self.G[neighbor_id].predecessor_id = vertex_id
                     self.G[neighbor_id].color = Color.RED if self.G[vertex_id].color == Color.BLUE else Color.BLUE
                     q.append(neighbor_id)
