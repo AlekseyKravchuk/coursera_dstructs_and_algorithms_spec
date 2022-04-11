@@ -93,7 +93,7 @@ def solution(a):
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ################################ MY SOLUTION ################################
 def euclidean_dist(p1, p2):
-    return sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2)
+    return sqrt((p1.a0 - p2.a0) ** 2 + (p1.y - p2.y) ** 2)
 
 
 def min_dist_brute_force(points):
@@ -120,7 +120,7 @@ def closest_split_dist(X, Y, median, min_dist):
     #             break
     # return min_dist
 
-    strip = [point for point in Y if abs(point.x - median) < min_dist]
+    strip = [point for point in Y if abs(point.a0 - median) < min_dist]
     for i, curr_point in enumerate(strip):
         for j in range(i + 1, min(i + 6, len(strip))):
             dist = euclidean_dist(curr_point, strip[j])
@@ -135,14 +135,14 @@ def closest_dist(X, Y):
         return min_dist_brute_force(X)
 
     mid = len(X) // 2  # индекс медианы по оси X
-    median = X[mid].x  # медиана по оси X
+    median = X[mid].a0  # медиана по оси X
     Lx = X[:mid]
     Rx = X[mid:]
 
     Ly = []
     Ry = []
     for point in Y:
-        if point.x < median:
+        if point.a0 < median:
             Ly.append(point)
         else:
             Ry.append(point)
