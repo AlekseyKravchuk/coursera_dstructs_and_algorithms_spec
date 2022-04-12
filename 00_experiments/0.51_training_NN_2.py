@@ -24,4 +24,4 @@ if __name__ == '__main__':
     # Then the cost function is,
     d = a1(x) - y  # Vector difference between observed and expected activation
     C = d @ d  # Absolute value squared of the difference.
-    print(f'Cost function value: {C:.4f}')
+    print(f'Cost function value: {C:.1f}')
