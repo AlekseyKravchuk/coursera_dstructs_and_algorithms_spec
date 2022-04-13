@@ -2,23 +2,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+# Here is the activation function and its derivative.
 sigma = lambda z: 1 / (1 + np.exp(-z))
 d_sigma = lambda z: np.cosh(z/2)**(-2) / 4
 
 
 # This function initialises the network with it's structure, it also resets any training already done.
-def reset_network (n1 = 6, n2 = 7, random=np.random) :
+# n1=6 is the number of neurons in 2-nd hidden layer (1-st if starting indexing from 0)
+# n2=7 is the number of neurons in 3-rd hidden layer (2-nd if starting indexing from 0)
+def reset_network(n1=6, n2=7):
     global W1, W2, W3, b1, b2, b3
-    W1 = random.randn(n1, 1) / 2
-    W2 = random.randn(n2, n1) / 2
-    W3 = random.randn(2, n2) / 2
-    b1 = random.randn(n1, 1) / 2
-    b2 = random.randn(n2, 1) / 2
-    b3 = random.randn(2, 1) / 2
+    W1 = np.random.randn(n1, 1) / 2   # W1_dim = 6x1 = n1x1
+    W2 = np.random.randn(n2, n1) / 2  # W2_dim = 7x6 = n2xn1
+    W3 = np.random.randn(2, n2) / 2   # W3_dim = 2x7 = n2xn1
+    b1 = np.random.randn(n1, 1) / 2   # b1_dim = 6x1 = n1x1
+    b2 = np.random.randn(n2, 1) / 2   # b2_dim = 6x1 = n1x1
+    b3 = np.random.randn(2, 1) / 2    # b3_dim = 2x1 = 2x1
 
 
 # This function feeds forward each activation to the next layer. It returns all weighted sums and activations.
-def network_function(a0) :
+def network_function(a0):
     z1 = W1 @ a0 + b1
     a1 = sigma(z1)
 
@@ -31,8 +34,11 @@ def network_function(a0) :
 
 
 # This is the cost function of a neural network with respect to a training set.
-def cost(x, y) :
-    return np.linalg.norm(network_function(x)[-1] - y)**2 / x.size
+# 'x' = a0 is the input to neural network
+# 'y' is desired output, has the same dimension as vector 'x'
+def cost(x, y):
+    a3 = network_function(x)[-1]   # a3 is calculated output of NN
+    return np.linalg.norm(a3 - y)**2 / x.size
 
 
 # Jacobian for the third layer weights.
@@ -42,15 +48,15 @@ def J_W3(x, y) :
 
     # We'll use the variable J to store parts of our result as we go along, updating it in each line.
     # Firstly, we calculate dC/da3, using the expressions above.
-    J = 2 * (a3 - y)
+    J = 2 * (a3 - y)     # dC/da3
 
     # Next multiply the result we've calculated by the derivative of sigma, evaluated at z3.
-    J = J * d_sigma(z3)
+    J = J * d_sigma(z3)  # da3/dz3
 
     # Then we take the dot product (along the axis that holds the training examples) with the final partial derivative,
     # i.e. dz3/dW3 = a2
     # and divide by the number of training examples, for the average over all training examples.
-    J = J @ a2.T / x.size
+    J = J @ a2.T / x.size   # dz3/dW3 = a2
     # Finally return the result out of the function.
     return J
 
@@ -62,13 +68,66 @@ def J_W3(x, y) :
 def J_b3(x, y) :
     # As last time, we'll first set up the activations.
     a0, z1, a1, z2, a2, z3, a3 = network_function(x)
-    # Next you should implement the first two partial derivatives of the Jacobian.
-    # ===COPY TWO LINES FROM THE PREVIOUS FUNCTION TO SET UP THE FIRST TWO JACOBIAN TERMS===
-    J = None
-    J = None
+    J = 2 * (a3 - y)      # dC/da3
+    J = J * d_sigma(z3)   # da3/dz3
     # For the final line, we don't need to multiply by dz3/db3, because that is multiplying by 1.
     # We still need to sum over all training examples however.
     # There is no need to edit this line.
+    J = np.sum(J, axis=1, keepdims=True) / x.size
+    return J
+
+
+# Compare this function to J_W3 to see how it changes.
+# There is no need to edit this function.
+def J_W2 (x, y) :
+    #The first two lines are identical to in J_W3.
+    a0, z1, a1, z2, a2, z3, a3 = network_function(x)
+    J = 2 * (a3 - y)     # dC/da3
+
+    # the next two lines implement da3/da2, first σ' and then W3.
+    J = J * d_sigma(z3)  # σ'(z3)
+    J = (J.T @ W3).T     # W3
+
+    # then the final lines are the same as in J_W3 but with the layer number bumped down.
+    J = J * d_sigma(z2)     # da2/dz2 = σ'(z2)
+    J = J @ a1.T / x.size   # dz2/dW2 = a1
+    return J
+
+
+# As previously, fill in all the incomplete lines.
+# ===YOU SHOULD EDIT THIS FUNCTION===
+def J_b2 (x, y) :
+    a0, z1, a1, z2, a2, z3, a3 = network_function(x)
+    J = 2 * (a3 - y)
+
+    J = J * d_sigma(z3)
+    J = (J.T @ W3).T
+    J = J * d_sigma(z2)
+    J = np.sum(J, axis=1, keepdims=True) / x.size
+    return J
+
+
+def J_W1 (x, y) :
+    a0, z1, a1, z2, a2, z3, a3 = network_function(x)
+    J = 2 * (a3 - y)
+    J = J * d_sigma(z3)
+    J = (J.T @ W3).T
+    J = J * d_sigma(z2)
+    J =(J.T @ W2).T
+    J = J * d_sigma(z1)
+    J = J @ a0.T / x.size
+    return J
+
+
+def J_b1 (x, y) :
+    a0, z1, a1, z2, a2, z3, a3 = network_function(x)
+    J = 2 * (a3 - y)
+    J = J * d_sigma(z3)
+    J = (J.T @ W3).T
+    J = J * d_sigma(z2)
+    J =(J.T @ W2).T
+    J = J * d_sigma(z1)
+    J = J @ a0.T / x.size
     J = np.sum(J, axis=1, keepdims=True) / x.size
     return J
 
@@ -125,6 +184,7 @@ if __name__ == '__main__':
                                 0.75997967, 0.74338643, 0.72532628, 0.70664083, 0.68819755,
                                 0.67085156, 0.65540709, 0.64258068, 0.63296789, 0.62701541]]))
     x, y = training_data
+    reset_network()
     pass
 
 
