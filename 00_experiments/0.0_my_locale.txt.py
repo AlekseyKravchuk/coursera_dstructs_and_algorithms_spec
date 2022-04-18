@@ -55,7 +55,21 @@ You also have to edit /etc/profile:
     export LC_ALL="en_US.utf8"
 
 From Ubuntu 18.04 upwards, you should issue "localectl status" to see the current locale and change it with
-    "sudo localctl set-locale en_US.UTF-8"
-
+    "sudo localectl set-locale en_US.UTF-8"
+My output:
+kav@zeus:~$ localectl status
+   System Locale: LANG=en_US.utf8
+                  LC_NUMERIC=ru_RU.UTF-8
+                  LC_TIME=ru_RU.UTF-8
+                  LC_MONETARY=ru_RU.UTF-8
+                  LC_PAPER=ru_RU.UTF-8
+                  LC_NAME=ru_RU.UTF-8
+                  LC_ADDRESS=ru_RU.UTF-8
+                  LC_TELEPHONE=ru_RU.UTF-8
+                  LC_MEASUREMENT=ru_RU.UTF-8
+                  LC_IDENTIFICATION=ru_RU.UTF-8
+       VC Keymap: n/a
+      X11 Layout: us
+       X11 Model: pc105
 
 
