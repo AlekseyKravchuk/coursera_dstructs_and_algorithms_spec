@@ -12,10 +12,17 @@ if __name__ == '__main__':
     with open(f_name, 'r') as f:
         html = f.read()
         # print(html)
-        sel = Selector(text=html)
-        sel_lst = sel.xpath("//p")
+        selector = Selector(text=html)
 
-        second_p_data = sel_lst[1].extract()
+        # 'xpath(xpath_expression)' method returns a list of selectors, which represents the nodes selected
+        # by the xpath expression given as an argument
+        sel_lst = selector.xpath("//p")
+
+        # the number of items (selectors of interest)
+        N = len(sel_lst)
+
+        # 'extract()' method returns a unicode string along with the selected data.
         data = sel_lst.extract()
-        print(data)
-        print(f'second object in selector list: {second_p_data}')
+        # data = sel_lst.extract()
+        print(f'extracted data: {data}')
+        print(f'the number of selectors returned: {N}')
