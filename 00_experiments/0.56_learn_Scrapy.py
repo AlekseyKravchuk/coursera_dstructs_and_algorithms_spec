@@ -11,32 +11,26 @@ if __name__ == '__main__':
     f_name = os.getcwd() + '/0.56_test4.html'
     with open(f_name, 'r') as f:
         html = f.read()
-<<<<<<< Updated upstream
-        # print(html)
+
         selector = Selector(text=html)
 
         # 'xpath(xpath_expression)' method returns a list of selectors, which represents the nodes selected
         # by the xpath expression given as an argument
         sel_lst = selector.xpath("//p")
+        # sel_lst = selector.xpath('//a/@href')
+        # sel_lst = selector.xpath('//*[contains(@href, "two")]')
 
         # the number of items (selectors of interest)
         N = len(sel_lst)
 
         # 'extract()' method returns a unicode string along with the selected data.
         data = sel_lst.extract()
-        # data = sel_lst.extract()
         print(f'extracted data: {data}')
         print(f'the number of selectors returned: {N}')
-=======
-        selector = Selector(text=html)
-        # sel_lst = selector.xpath('//*[contains(@href, "two")]')
 
         # Create an xpath to the href attribute
         # sel_lst = selector.xpath('//p[@id="p2"]/a/@href')
 
-        sel_lst = selector.xpath('//a/@href')
-
-        # sel_lst = selector.xpath('//p')
     # response = HtmlResponse(url='http://mysite.com')
     # print(response)
     # data = Selector(response=response).xpath('//span').extract()
@@ -47,4 +41,3 @@ if __name__ == '__main__':
 
     print(data)
     # print(f'second object in selector list: {data}')
->>>>>>> Stashed changes
