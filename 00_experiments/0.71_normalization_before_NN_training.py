@@ -1,5 +1,6 @@
 import numpy
 import numpy as np
+from math import sqrt
 
 
 def simple_normalize(x: numpy.ndarray, _min=None, _max=None) -> tuple:
@@ -24,17 +25,20 @@ def rms_normalize(x: numpy.ndarray, _mean=None, s_x=None) -> tuple:
         return ((x - _mean) / s_x), _mean, s_x
     else:
         _mean = x.mean()
-        s_x = np.sqrt((1 / (len(x) - 1)) * (x - _mean) ** 2)
+        # s_x = np.sqrt((1 / (len(x) - 1)) * (x - _mean) ** 2)
+        s_x = sqrt((1 / (len(x) - 1)) * np.sum((x - _mean) ** 2))
         return (x - _mean) / s_x, _mean, s_x
 
 
 if __name__ == '__main__':
     # x = np.arange(1, 5)
     x = np.array([50, 60, 80, 100])
-
+    # x = np.array([0, 1, 1, 0])
     # x_normalized, _min, _max = simple_normalize(x)
     x_normalized, _mean, sigma = rms_normalize(x)
     # print(f'x_normalized = {x_normalized}')
     with np.printoptions(precision=3, suppress=True):
         print(f'x_normalized = {x_normalized}')
-        print(f'object_normalized = {rms_normalize(np.array([90]), _mean, sigma)}')
+        obj = 90
+        print(f'object value before normalisation is []'
+              f'object_normalized = {rms_normalize(np.array([90]), _mean, sigma)[0]}')
