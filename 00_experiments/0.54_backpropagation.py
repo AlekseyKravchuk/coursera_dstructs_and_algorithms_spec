@@ -38,7 +38,7 @@ def network_function(a0):
 # 'y' is desired output, has the same dimension as vector 'x'
 def cost(x, y):
     a3 = network_function(x)[-1]   # a3 is calculated output of NN
-    return np.linalg.norm(a3 - y)**2 / x.size
+    return np.linalg.norm(a3 - y)**2 / x.res_matrix_size
 
 
 # Jacobian for the third layer weights.
@@ -56,7 +56,7 @@ def J_W3(x, y) :
     # Then we take the dot product (along the axis that holds the training examples) with the final partial derivative,
     # i.e. dz3/dW3 = a2
     # and divide by the number of training examples, for the average over all training examples.
-    J = J @ a2.T / x.size   # dz3/dW3 = a2
+    J = J @ a2.T / x.res_matrix_size   # dz3/dW3 = a2
     # Finally return the result out of the function.
     return J
 
@@ -73,7 +73,7 @@ def J_b3(x, y) :
     # For the final line, we don't need to multiply by dz3/db3, because that is multiplying by 1.
     # We still need to sum over all training examples however.
     # There is no need to edit this line.
-    J = np.sum(J, axis=1, keepdims=True) / x.size
+    J = np.sum(J, axis=1, keepdims=True) / x.res_matrix_size
     return J
 
 
@@ -90,7 +90,7 @@ def J_W2 (x, y) :
 
     # then the final lines are the same as in J_W3 but with the layer number bumped down.
     J = J * d_sigma(z2)     # da2/dz2 = σ'(z2)
-    J = J @ a1.T / x.size   # dz2/dW2 = a1
+    J = J @ a1.T / x.res_matrix_size   # dz2/dW2 = a1
     return J
 
 
@@ -103,7 +103,7 @@ def J_b2 (x, y) :
     J = J * d_sigma(z3)
     J = (J.T @ W3).T
     J = J * d_sigma(z2)
-    J = np.sum(J, axis=1, keepdims=True) / x.size
+    J = np.sum(J, axis=1, keepdims=True) / x.res_matrix_size
     return J
 
 
@@ -115,7 +115,7 @@ def J_W1 (x, y) :
     J = J * d_sigma(z2)
     J =(J.T @ W2).T
     J = J * d_sigma(z1)
-    J = J @ a0.T / x.size
+    J = J @ a0.T / x.res_matrix_size
     return J
 
 
@@ -127,8 +127,8 @@ def J_b1 (x, y) :
     J = J * d_sigma(z2)
     J =(J.T @ W2).T
     J = J * d_sigma(z1)
-    J = J @ a0.T / x.size
-    J = np.sum(J, axis=1, keepdims=True) / x.size
+    J = J @ a0.T / x.res_matrix_size
+    J = np.sum(J, axis=1, keepdims=True) / x.res_matrix_size
     return J
 
 
