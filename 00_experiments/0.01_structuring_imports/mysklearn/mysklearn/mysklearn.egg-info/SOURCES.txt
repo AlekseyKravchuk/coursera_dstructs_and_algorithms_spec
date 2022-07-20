@@ -1,0 +1,5 @@
+setup.py
+mysklearn.egg-info/PKG-INFO
+mysklearn.egg-info/SOURCES.txt
+mysklearn.egg-info/dependency_links.txt
+mysklearn.egg-info/top_level.txt
